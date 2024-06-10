@@ -1,7 +1,20 @@
-﻿namespace TypingPractice.ConsoleApp.Screens.Menus
+﻿using TypingPractice.ConsoleApp.Screens.BaseScreens;
+using TypingPractice.ConsoleApp.Screens.SplashScreens;
+
+namespace TypingPractice.ConsoleApp.Screens.Menus
 {
-    internal class MainMenu
+    public class MainMenu : ScrollingMenu
     {
-        //TODO: Implement MainMenu screen w/ scroll options
+        protected override string MenuTitle => "Main Menu";
+
+        public override int GetOptionsBorderWidth() => 70;
+
+        public override IEnumerable<(string OptionMessage, Screen NextScreen)> GetOptions() =>
+        [
+            ("Lessons", new LessonsMenu()),
+            ("Adventure", new AdventureMenu()),
+            ("Drills", new DrillsMenu()),
+            ("Quit", new ClosingScreen()),
+        ];
     }
 }

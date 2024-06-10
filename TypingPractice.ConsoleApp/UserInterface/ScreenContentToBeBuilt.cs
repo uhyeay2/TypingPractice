@@ -6,32 +6,6 @@
 
         private IEnumerable<string> _contents = [];
 
-        #region Formatting Methods
-
-        public ScreenContentToBeBuilt ApplyBorder(int? targetWidth = null)
-        {
-            _contents = Border.Apply(_contents, targetWidth);
-
-            return this;
-        }
-
-        public ScreenContentToBeBuilt CenterByConsoleSize(bool horizontal = true, bool vertical = true)
-        {
-            if (horizontal)
-            {
-                _contents = Center.Horizontal(_contents, Console.WindowWidth);
-            }
-
-            if (vertical)
-            {
-                _contents = Center.Vertical(_contents, Console.WindowHeight);
-            }
-
-            return this;
-        }
-
-        #endregion
-
         #region Adding Content Methods
 
         public ScreenContentToBeBuilt AddContent(params string[] content)

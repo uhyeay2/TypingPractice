@@ -2,12 +2,13 @@
 using System.Diagnostics;
 using TypingPractice.ConsoleApp.Extensions;
 using TypingPractice.ConsoleApp.Models;
+using TypingPractice.ConsoleApp.Screens.Menus;
 using TypingPractice.ConsoleApp.Screens.SplashScreens;
 using TypingPractice.ConsoleApp.UserInterface;
 
-namespace TypingPractice.ConsoleApp.Screens.Exercises
+namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
 {
-    internal class KeyPractice : Screen
+    internal class KeyFlashCardsExerciseScreen : Screen
     {
         private const int InnerBorderWidth = 40;
 
@@ -23,9 +24,7 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises
 
         private readonly List<KeyTypedStat> _keysTyped = new();
 
-        public KeyPractice() => _pool = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWZYZ1234567890-=!@#$%^&*()_+[]{};:'\"/?";
-
-        public KeyPractice(string pool) => _pool = pool;       
+        public KeyFlashCardsExerciseScreen(string pool) => _pool = pool;
 
         public override Screen DisplayScreenAndGetNext()
         {
@@ -63,7 +62,7 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises
 
                 if (input.Key == ConsoleKey.Escape)
                 {
-                    keepTyping = false;
+                    return new PauseScreen(this, new KeyFlashCardsMainMenu());
                 }
                 else
                 {
@@ -73,68 +72,68 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises
                 }
             }
 
-            _consoleWriter.ClearThenWriteLines(_contentBuilder
-                .New( _ =>
-                    _.AddContent(
-                        FiggleFonts.SlantSmall.RenderIEnumerable("Score", ""),
-                        Border.Apply(GetScores()),
-                        ["", "Press Any Key To Continue"]
+            _consoleWriter.ClearThenWriteLines(_contentBuilder.New(_ =>
+                _.AddContent(
+                    Center.ByConsoleWidthAndHeight(
+                        Border.Apply(targetWidth: null,
+                            FiggleFonts.SlantSmall.RenderIEnumerable("Score", ""),
+                            Border.Apply(GenerateScoresContent()),
+                            ["", "Press Any Key To Continue"]
+                        )
                     )
-                    .ApplyBorder()
-                    .CenterByConsoleSize()
-                ));
+                )
+            ));
 
             Console.ReadKey(true);
 
             return new ClosingScreen();
         }
 
-        private ScreenContent GenerateScreenContent(char? c, KeyTypedStat? lastKeyTyped) => _contentBuilder.New(_ =>
-            _.AddContent(c == null ? 
-                [   // Left Side Content Before Starting (expected Char not yet generated)
-                    Border.Apply(
-                        [
-                            "Press Any Key", 
-                            "",
-                            "To Start Typing"
-                        ], InnerBorderWidth)
-                    .Append(""),
-                    Border.Apply(
-                        FiggleFonts.SlantSmall.RenderIEnumerable(LeftContentFiggleFontHeight, 
-                            "Press", 
-                            "Any", 
-                            "Key"), InnerBorderWidth)
-                ]:[
-                    // Left Side Content when Typing has started (expected Char has been generated)
-                    Border.Apply(
-                        [
-                            c.Value.ExpectedCharacterDescription(), 
-                            "",
-                            $"Last Key Typed: {_keysTyped.LastOrDefault()?.CharacterTyped ?? ' '}"
-                        ], InnerBorderWidth)
-                    .Append(""),
-                    Border.Apply(
-                        FiggleFonts.Univers.RenderIEnumerable(
-                            c.Value.ToString(), LeftContentFiggleFontHeight)
-                        , InnerBorderWidth)
-                ])
-            .MergeRightSideContent(_ => 
-                _.AddContent( // Right Side Content
-                    FiggleFonts.SlantSmall.RenderIEnumerable(ScoresHeaderFiggleFontHeight, "Score"),
-                    Border.Apply(
-                        GetScores()
-                        , InnerBorderWidth),
-                    FiggleFonts.SlantSmall.RenderIEnumerable(ResponsiveMessageFiggleFontHeight,
-                        c == null ? ["", "Start", "Typing"]
-                        : lastKeyTyped == null ? ["Good", "Luck"]
-                        : lastKeyTyped.IsCorrectKeyTyped ? ["Good", "Job"]
-                        : ["Try", "Again"])
-                ), middlePadding: "  ")
-            .AddContent("")
-            .ApplyBorder()
-            .CenterByConsoleSize(vertical: false));
+        private IEnumerable<string> GetLeftSideScreenContent(char? c, KeyTypedStat? lastKeyTyped) => c == null ?
+            // Left Side Content Before Typing Started (expected Char not yet generated)
+            Border.Apply(InnerBorderWidth,
+                "Press Any Key", "", "To Start Typing")
+            .Append("").Concat(
+            Border.Apply(InnerBorderWidth,
+                FiggleFonts.SlantSmall.RenderIEnumerable(LeftContentFiggleFontHeight,
+                    "Press", "Any", "Key")
+            ))
+            : // Left Side Content when Typing has started (expected Char has been generated)
+            Border.Apply(InnerBorderWidth,
+                c.Value.ExpectedCharacterDescription(), "", $"Last Key Typed: {GetLastCharacterTyped(lastKeyTyped)}")
+            .Append("").Concat(
+            Border.Apply(InnerBorderWidth,
+                FiggleFonts.Colossal.RenderIEnumerable(LeftContentFiggleFontHeight,
+                    c.Value.ToString())
+            ));
 
-        private IEnumerable<string> GetScores()
+        private IEnumerable<string> GetRightSideScreenContent(char? c, KeyTypedStat? lastKeyTyped) =>
+            FiggleFonts.SlantSmall.RenderIEnumerable(ScoresHeaderFiggleFontHeight, "Score")
+            .Concat(Border.Apply(InnerBorderWidth, GenerateScoresContent()))
+            .Concat(FiggleFonts.SlantSmall.RenderIEnumerable(ResponsiveMessageFiggleFontHeight,
+                c == null ? ["", "Start", "Typing"]
+                : lastKeyTyped == null ? ["Good", "Luck"]
+                : lastKeyTyped.IsCorrectKeyTyped ? ["Good", "Job"]
+                : ["Try", "Again"])).Append("");
+
+        private ScreenContent GenerateScreenContent(char? c, KeyTypedStat? lastKeyTyped) => _contentBuilder.New(_ =>
+            _.AddContent(
+                Center.HorizontalByConsoleWidth(
+                    Border.Apply(
+                        GetLeftSideScreenContent(c, lastKeyTyped)
+                        .MergeToRight(GetRightSideScreenContent(c, lastKeyTyped), middlePadding: "  ")
+                    )
+                )
+            ));
+
+        private char GetLastCharacterTyped(KeyTypedStat? lastKeyTyped) =>
+            (lastKeyTyped?.CharacterTyped) switch
+            {
+                null or '\n' or '\r' or '\t' or '\b' or '\0' => ' ',
+                _ => lastKeyTyped.CharacterTyped,
+            };
+
+        private IEnumerable<string> GenerateScoresContent()
         {
             var countOfKeysTyped = _keysTyped.Count;
 

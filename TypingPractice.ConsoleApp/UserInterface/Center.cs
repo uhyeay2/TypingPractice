@@ -4,6 +4,14 @@ namespace TypingPractice.ConsoleApp.UserInterface
 {
     public static class Center
     {
+        public static IEnumerable<string> ByConsoleWidthAndHeight(params IEnumerable<string>[] content) => 
+            ByConsoleWidthAndHeight(content.Aggregate((a, b) => a.Concat(b)));
+        public static IEnumerable<string> ByConsoleWidthAndHeight(IEnumerable<string> content) =>
+            Vertical(Horizontal(content, Console.WindowWidth), Console.WindowHeight);
+
+        public static IEnumerable<string> HorizontalByConsoleWidth(params IEnumerable<string>[] content) => 
+            Horizontal(content.Aggregate((a, b) => a.Concat(b)), Console.WindowWidth);
+
         public static IEnumerable<string> Horizontal(IEnumerable<string> content, int? targetLength = null)
         {
             var minLength = content.Max(_ => _.Length);
@@ -12,6 +20,9 @@ namespace TypingPractice.ConsoleApp.UserInterface
 
             return content.Select(_ => _.PadToCenter(length));
         }
+
+        public static IEnumerable<string> Vertical(int targetHeight, params IEnumerable<string>[] content) =>
+            Vertical(content.Aggregate((a, b) => a.Concat(b)), targetHeight);
 
         public static IEnumerable<string> Vertical(IEnumerable<string> content, int targetHeight)
         {
