@@ -15,6 +15,8 @@ namespace TypingPractice.ConsoleApp.Screens.SplashScreens
 
         protected override string MenuTitle => "Pause Menu";
 
+        public override int GetOptionsBorderWidth() => 60;
+
         public override int GetOptionsBorderHeight() => 10;
 
         public override IEnumerable<(string OptionMessage, Screen NextScreen)> GetOptions() =>
