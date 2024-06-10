@@ -1,4 +1,6 @@
-﻿using TypingPractice.ConsoleApp.Screens.BaseScreens;
+﻿using Figgle;
+using TypingPractice.ConsoleApp.Extensions;
+using TypingPractice.ConsoleApp.Screens.BaseScreens;
 
 namespace TypingPractice.ConsoleApp.Screens.SplashScreens
 {
@@ -6,14 +8,21 @@ namespace TypingPractice.ConsoleApp.Screens.SplashScreens
     {
         private readonly Screen _screenToResumeTo, _screenToQuitTo;
 
-        public PauseScreen(Screen screenToReturnTo, Screen menuToQuitTo)
+        private readonly IEnumerable<string> _contentAboveOptions;
+
+        public PauseScreen(Screen screenToReturnTo, Screen menuToQuitTo, IEnumerable<string>? contentAboveOptions = null)
         {
             _screenToResumeTo = screenToReturnTo;
 
             _screenToQuitTo = menuToQuitTo;
+
+            _contentAboveOptions = contentAboveOptions ?? [];
         }
 
         protected override string MenuTitle => "Pause Menu";
+
+        public override IEnumerable<string> GenerateContentAboveMenu() =>
+            FiggleFonts.SlantSmall.RenderIEnumerable("Pause").Concat(_contentAboveOptions);
 
         public override int GetOptionsBorderWidth() => 60;
 

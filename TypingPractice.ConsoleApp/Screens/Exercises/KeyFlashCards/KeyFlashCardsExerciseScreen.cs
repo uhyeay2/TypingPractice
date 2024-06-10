@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using TypingPractice.ConsoleApp.Extensions;
 using TypingPractice.ConsoleApp.Models;
-using TypingPractice.ConsoleApp.Screens.Menus;
 using TypingPractice.ConsoleApp.Screens.SplashScreens;
 using TypingPractice.ConsoleApp.UserInterface;
 
@@ -60,9 +59,9 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
 
                 var milliseconds = stopWatch.Elapsed.TotalMilliseconds;
 
-                if (input.Key == ConsoleKey.Escape)
+                if (input.Key == ConsoleKey.Escape || input.Key == ConsoleKey.Enter)
                 {
-                    return new PauseScreen(this, new KeyFlashCardsMainMenu());
+                    return new PauseScreen(this, new KeyFlashCardsMainMenu(), Border.Apply(GenerateScoresContent()));
                 }
                 else
                 {
@@ -71,20 +70,6 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
                     _keysTyped.Add(lastKeyTyped);
                 }
             }
-
-            _consoleWriter.ClearThenWriteLines(_contentBuilder.New(_ =>
-                _.AddContent(
-                    Center.ByConsoleWidthAndHeight(
-                        Border.Apply(targetWidth: null,
-                            FiggleFonts.SlantSmall.RenderIEnumerable("Score", ""),
-                            Border.Apply(GenerateScoresContent()),
-                            ["", "Press Any Key To Continue"]
-                        )
-                    )
-                )
-            ));
-
-            Console.ReadKey(true);
 
             return new ClosingScreen();
         }
@@ -117,14 +102,10 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
                 : ["Try", "Again"])).Append("");
 
         private ScreenContent GenerateScreenContent(char? c, KeyTypedStat? lastKeyTyped) => _contentBuilder.New(_ =>
-            _.AddContent(
-                Center.HorizontalByConsoleWidth(
-                    Border.Apply(
-                        GetLeftSideScreenContent(c, lastKeyTyped)
-                        .MergeToRight(GetRightSideScreenContent(c, lastKeyTyped), middlePadding: "  ")
-                    )
-                )
-            ));
+            _.AddContent(Center.HorizontalByConsoleWidth(Border.Apply(
+                GetLeftSideScreenContent(c, lastKeyTyped)
+                .MergeToRight(GetRightSideScreenContent(c, lastKeyTyped), middlePadding: "  ")
+            ))));
 
         private char GetLastCharacterTyped(KeyTypedStat? lastKeyTyped) =>
             (lastKeyTyped?.CharacterTyped) switch
