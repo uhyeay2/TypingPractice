@@ -1,5 +1,6 @@
 ﻿using Figgle;
 using TypingPractice.ConsoleApp.Borders;
+using TypingPractice.ConsoleApp.Display.ScreenContent;
 using TypingPractice.ConsoleApp.Extensions;
 using TypingPractice.ConsoleApp.Screens.BaseScreens;
 using TypingPractice.ConsoleApp.Screens.Menus;

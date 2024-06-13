@@ -1,18 +1,14 @@
 ﻿using Figgle;
-using TypingPractice.ConsoleApp.UserInterface;
 
 namespace TypingPractice.ConsoleApp.Extensions
 {
     public static class FiggleFontExtensions
-    {
-        //public static IEnumerable<DisplayedLine> Render(this FiggleFont font, ConsoleColor fontColor, ConsoleColor backgroundColor, params string[] content) =>
-        //    content.Select(_ => Render(font, fontColor, backgroundColor, _, targetHeight: null)).Aggregate((a,b) => a.Concat(b));
-
-        public static IEnumerable<DisplayedLine> Render(this FiggleFont font, ConsoleColor fontColor, ConsoleColor backgroundColor, string content, int? targetHeight = null)
+    {       
+        public static IEnumerable<UserInterface.DisplayedLine> Render(this FiggleFont font, ConsoleColor fontColor, ConsoleColor backgroundColor, string content, int? targetHeight = null)
         {
             var formattedContent = font.RenderIEnumerable(content, targetHeight);
 
-            return formattedContent.Select(_ => new DisplayedLine(_, fontColor, backgroundColor));
+            return formattedContent.Select(_ => new UserInterface.DisplayedLine(_, fontColor, backgroundColor));
         }
 
         public static IEnumerable<string> RenderIEnumerable(this FiggleFont font, int targetHeight, params string[] content)

@@ -15,8 +15,12 @@ namespace TypingPractice.ConsoleApp.Borders
 
         public abstract IEnumerable<DisplayedLine> AddSideBorders(int targetWidth, IEnumerable<DisplayedLine> content);
 
-        public virtual IEnumerable<DisplayedLine> PadContentInsideBorder(int targetWidth, int? targetHeight, IEnumerable<DisplayedLine> content) =>
-            content.PadToCenter(BackgroundColor, targetWidth);
+        public virtual IEnumerable<DisplayedLine> PadContentInsideBorder(int targetWidth, int? targetHeight, IEnumerable<DisplayedLine> content)
+        {
+            content = content.PadTopAndBottom(targetHeight ?? content.Count());
+
+            return content.PadToCenter(BackgroundColor, targetWidth);
+        }
           
         public abstract int WidthOfSideBorders { get; }
 

@@ -17,7 +17,6 @@ namespace TypingPractice.ConsoleApp.Screens
 
         protected static readonly BaseBorder _defaultBorder = new StandardBorder(BorderColor, BackgroundColor);
 
-
         public abstract Screen DisplayScreenAndGetNext();
     }
 }

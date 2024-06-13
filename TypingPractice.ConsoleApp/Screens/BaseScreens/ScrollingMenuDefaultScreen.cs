@@ -28,7 +28,7 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 
         public override IEnumerable<DisplayedLine> FormatSelectedOption(string option) => 
             FiggleFonts.Doom.Render(SecondaryFontColor, BackgroundColor, "> ")
-            .MergeOnRightSide(FiggleFonts.Doom.Render(FontColor, BackgroundColor, option)).ToArray()
+            .MergeOnRightSide(FiggleFonts.Doom.Render(FontColor, BackgroundColor, option))
             .MergeOnRightSide(FiggleFonts.Doom.Render(SecondaryFontColor, BackgroundColor, " <"));
 
         public override DisplayedContent GetDisplayedContent(IEnumerable<DisplayedLine> formattedOptions) => new(

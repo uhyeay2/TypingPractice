@@ -11,8 +11,8 @@ namespace TypingPractice.ConsoleApp.Screens.Menus
 
         public override IEnumerable<(string OptionMessage, Screen NextScreen)> GetOptions() =>
         [
-            ("Lessons", new LessonsMenu()),
-            ("Adventure", new AdventureMenu()),
+            //("Lessons", new LessonsMenu()),
+            //("Adventure", new AdventureMenu()),
             ("Drills", new DrillsMenu()),
             ("Quit", new ClosingScreen()),
         ];

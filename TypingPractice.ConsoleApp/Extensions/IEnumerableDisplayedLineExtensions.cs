@@ -90,10 +90,10 @@ namespace TypingPractice.ConsoleApp.Extensions
         #region Pad Horizontal
 
         public static IEnumerable<DisplayedLine> PadToCenterOfConsole(this IEnumerable<DisplayedLine> lines, ConsoleColor paddingColor) =>
-            PadToCenter(lines, paddingColor, Console.WindowWidth, strictWidth: true);
+            lines.PadToCenter(paddingColor, Console.WindowWidth, strictWidth: true);
 
         public static IEnumerable<DisplayedLine> PadToCenter(this IEnumerable<DisplayedLine> lines, ConsoleColor paddingColor, int? targetWidth = null, bool strictWidth = false) =>
-            PadToCenter(lines, ' ', paddingColor, paddingColor, targetWidth, strictWidth);
+            lines.PadToCenter(' ', paddingColor, paddingColor, targetWidth, strictWidth);
 
         public static IEnumerable<DisplayedLine> PadToCenter(this IEnumerable<DisplayedLine> lines, char padding, ConsoleColor paddingColor, ConsoleColor paddingBackgroundColor, int? targetWidth = null, bool strictWidth = false)
         {
