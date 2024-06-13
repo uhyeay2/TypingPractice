@@ -56,7 +56,7 @@ namespace TypingPractice.ConsoleApp.UserInterface
             };
 
             return topBorder.Concat(innerLines).Concat(bottomBorder);
-        }
+        }       
 
         #endregion
     }

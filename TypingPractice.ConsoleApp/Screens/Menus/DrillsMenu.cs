@@ -4,13 +4,13 @@ using TypingPractice.ConsoleApp.Screens.SplashScreens;
 
 namespace TypingPractice.ConsoleApp.Screens.Menus
 {
-    public class DrillsMenu : ScrollingMenu
+    public class DrillsMenu : ScrollingMenuDefaultScreen
     {
-        protected override string MenuTitle => "Typing Drills";
+        public override string MenuTitle => "Typing Drills";
 
         public override IEnumerable<(string OptionMessage, Screen NextScreen)> GetOptions() =>
         [
-            ("Key FlashCards", new KeyFlashCardsMainMenu()),
+            ("Key Drills", new KeyFlashCardsMainMenu()),
             ("Previous", new MainMenu()),
             ("Quit", new ClosingScreen())
         ];

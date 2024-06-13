@@ -67,7 +67,7 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
                         GenerateContentBelowMenu()
                 ))));
 
-                var input = Console.ReadKey().Key;
+                var input = Console.ReadKey(true).Key;
 
                 switch (input)
                 {

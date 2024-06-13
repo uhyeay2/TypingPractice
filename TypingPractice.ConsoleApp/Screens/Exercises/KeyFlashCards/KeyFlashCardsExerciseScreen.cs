@@ -61,7 +61,7 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
 
                 if (input.Key == ConsoleKey.Escape || input.Key == ConsoleKey.Enter)
                 {
-                    return new PauseScreen(this, new KeyFlashCardsMainMenu(), Border.Apply(GenerateScoresContent()));
+                    keepTyping = false;
                 }
                 else
                 {
@@ -71,7 +71,7 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
                 }
             }
 
-            return new ClosingScreen();
+            return new PauseScreen(this, new KeyFlashCardsMainMenu(), Border.Apply(GenerateScoresContent()));
         }
 
         private IEnumerable<string> GetLeftSideScreenContent(char? c, KeyTypedStat? lastKeyTyped) => c == null ?

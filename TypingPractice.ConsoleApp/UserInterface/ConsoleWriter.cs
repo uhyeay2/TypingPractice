@@ -4,6 +4,9 @@
     {
         public void WriteLines(ScreenContent screenContent)
         {
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+
             foreach (var line in screenContent.GetContents())
             {
                 Console.WriteLine(line);

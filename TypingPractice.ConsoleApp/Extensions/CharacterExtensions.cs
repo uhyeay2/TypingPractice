@@ -4,7 +4,6 @@
     {
         public static string ExpectedCharacterDescription(this char c)
         {
-
             if (char.IsWhiteSpace(c))
             {
                 return "    Space   ";

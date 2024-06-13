@@ -1,9 +1,20 @@
 ﻿using Figgle;
+using TypingPractice.ConsoleApp.UserInterface;
 
 namespace TypingPractice.ConsoleApp.Extensions
 {
     public static class FiggleFontExtensions
     {
+        //public static IEnumerable<DisplayedLine> Render(this FiggleFont font, ConsoleColor fontColor, ConsoleColor backgroundColor, params string[] content) =>
+        //    content.Select(_ => Render(font, fontColor, backgroundColor, _, targetHeight: null)).Aggregate((a,b) => a.Concat(b));
+
+        public static IEnumerable<DisplayedLine> Render(this FiggleFont font, ConsoleColor fontColor, ConsoleColor backgroundColor, string content, int? targetHeight = null)
+        {
+            var formattedContent = font.RenderIEnumerable(content, targetHeight);
+
+            return formattedContent.Select(_ => new DisplayedLine(_, fontColor, backgroundColor));
+        }
+
         public static IEnumerable<string> RenderIEnumerable(this FiggleFont font, int targetHeight, params string[] content)
         {
             var figgledContent = RenderIEnumerable(font, content);
@@ -15,9 +26,9 @@ namespace TypingPractice.ConsoleApp.Extensions
                 var topPaddingSize = (targetHeight - currentHeight) / 2;
                 var bottomPaddingSize = targetHeight - (currentHeight + topPaddingSize);
 
-                return Enumerable.Range(0, topPaddingSize).Select(_ => "")
+                return Enumerable.Repeat("", topPaddingSize)
                                  .Concat(figgledContent)
-                                 .Concat(Enumerable.Range(0, bottomPaddingSize).Select(_ => ""));
+                                 .Concat(Enumerable.Repeat("", bottomPaddingSize));
             }
 
             return figgledContent;

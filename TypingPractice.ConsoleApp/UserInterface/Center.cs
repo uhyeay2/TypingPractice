@@ -4,8 +4,6 @@ namespace TypingPractice.ConsoleApp.UserInterface
 {
     public static class Center
     {
-        public static IEnumerable<string> ByConsoleWidthAndHeight(params IEnumerable<string>[] content) => 
-            ByConsoleWidthAndHeight(content.Aggregate((a, b) => a.Concat(b)));
         public static IEnumerable<string> ByConsoleWidthAndHeight(IEnumerable<string> content) =>
             Vertical(Horizontal(content, Console.WindowWidth), Console.WindowHeight);
 

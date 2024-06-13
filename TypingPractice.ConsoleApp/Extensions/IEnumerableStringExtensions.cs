@@ -4,6 +4,9 @@ namespace TypingPractice.ConsoleApp.Extensions
 {
     public static class IEnumerableStringExtensions
     {
+        public static IEnumerable<DisplayedLine> AsDisplayedLine(this IEnumerable<string> source, ConsoleColor fontColor, ConsoleColor backgroundColor) =>
+            source.Select(_ => new DisplayedLine(_, fontColor, backgroundColor));
+
         public static IEnumerable<string> MergeToRight(this IEnumerable<string> source, IEnumerable<string> contentToMerge, string middlePadding = "")
         {
             var newContentHeight = contentToMerge.Count() - 1;

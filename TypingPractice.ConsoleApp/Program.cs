@@ -4,7 +4,6 @@ using TypingPractice.ConsoleApp.Screens.SplashScreens;
 Console.CursorVisible = false;
 Console.ForegroundColor = ConsoleColor.DarkGreen;
 
-
 Screen screen = new OpeningScreen();
 
 var keepRunning = true;
