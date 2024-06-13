@@ -4,13 +4,15 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 {
     public abstract class AnyKeyToContinue : Screen
     {        
-        public abstract DisplayedScreen GetDisplayedScreen();
+        public abstract DisplayedSection GetDisplay();
 
         public abstract Screen GetNextScreen();
 
         public override Screen DisplayScreenAndGetNext()
         {
-            GetDisplayedScreen().Write();
+            var screen = new DisplayedScreen(GetDisplay());
+                
+            screen.ClearThenWrite();
 
             Console.ReadKey(true);
 

@@ -4,7 +4,10 @@ namespace TypingPractice.ConsoleApp.Display.BorderedSection
 {
     internal class BasicBorder : DisplayedBorder
     {
-        public BasicBorder(ConsoleColor fontColor, ConsoleColor backgroundColor, int width, int height, DisplayedSection content) : base(width, height, content)
+        public BasicBorder(ConsoleColor fontColor, ConsoleColor backgroundColor, int width, int height, params DisplayedSection[] content) 
+        : this(fontColor, backgroundColor, width, height, new DisplayedSection(content)) { }
+
+        private BasicBorder(ConsoleColor fontColor, ConsoleColor backgroundColor, int width, int height, DisplayedSection content) : base(width, height, content)
         {
             _fontColor = fontColor;
 

@@ -8,10 +8,18 @@ namespace TypingPractice.ConsoleApp.Display.ScreenContent
     {
         public DisplayedSection() { }
 
-        public DisplayedSection(ConsoleColor fontColor, ConsoleColor backgroundColor, FiggleFont font, string text)
-            : this(fontColor, backgroundColor, font.RenderIEnumerable(text)) { }
+        public DisplayedSection(ConsoleColor fontColor, ConsoleColor backgroundColor, FiggleFont font, params string[] text)             
+        {
+            foreach (var t in text)
+            {
+                AddRange(new DisplayedSection(fontColor, backgroundColor, font, t));
+            }
+        }
 
-        public DisplayedSection(ConsoleColor fontColor, ConsoleColor backgroundColor, IEnumerable<string> linesToDisplay)
+        public DisplayedSection(ConsoleColor fontColor, ConsoleColor backgroundColor, FiggleFont font, string text)
+            : this(fontColor, backgroundColor, font.RenderIEnumerable(text).ToArray()) { }
+
+        public DisplayedSection(ConsoleColor fontColor, ConsoleColor backgroundColor, params string[] linesToDisplay)
         {
             foreach (var line in linesToDisplay)
             {
@@ -32,13 +40,13 @@ namespace TypingPractice.ConsoleApp.Display.ScreenContent
             }
         }
 
-        public DisplayedSection Centered(ConsoleColor backgroundColor) => Centered(backgroundColor, Console.WindowWidth, Console.WindowHeight);
+        public DisplayedSection Centered(ConsoleColor backgroundColor) => Centered(backgroundColor, Console.WindowWidth, Console.WindowHeight - 1);
 
         public DisplayedSection Centered(ConsoleColor backgroundColor, int width, int height) =>
             CenteredHorizontal(backgroundColor, width)
             .CenteredVertical(backgroundColor, height);
 
-        public DisplayedSection CenteredVertical(ConsoleColor backgroundColor) => CenteredVertical(backgroundColor, Console.WindowHeight);
+        public DisplayedSection CenteredVertical(ConsoleColor backgroundColor) => CenteredVertical(backgroundColor, Console.WindowHeight - 1);
 
         public DisplayedSection CenteredVertical(ConsoleColor backgroundColor, int height)
         {

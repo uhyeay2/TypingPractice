@@ -1,31 +1,67 @@
 ﻿using Figgle;
-using TypingPractice.ConsoleApp.Borders;
+using TypingPractice.ConsoleApp.Display.BorderedSection;
 using TypingPractice.ConsoleApp.Display.ScreenContent;
-using TypingPractice.ConsoleApp.Extensions;
 using TypingPractice.ConsoleApp.Screens.BaseScreens;
 using TypingPractice.ConsoleApp.Screens.Menus;
-using TypingPractice.ConsoleApp.UserInterface;
 
 namespace TypingPractice.ConsoleApp.Screens.SplashScreens
 {
-    public class OpeningScreen : AnyKeyToContinueScreen
+    public class OpeningScreen : RefreshUntilAnyKeyToContinue
     {        
-        private const ConsoleColor KeyboardColor = ConsoleColor.Cyan;
+        private const ConsoleColor _borderColor = ConsoleColor.Red;
 
-        private static readonly BaseBorder _border = new StandardBorder(BorderColor, BackgroundColor);
+        private const ConsoleColor _backgroundColor = ConsoleColor.Black;
 
-        public override DisplayedContent GetScreenContent() => new(
-            _border.Apply(
-                FiggleFonts.SlantSmall.RenderIEnumerable("Typing  Practice").AsDisplayedLine(FontColor, BackgroundColor),
-                FiggleFonts.KeyboardSmall.RenderIEnumerable("~1234567890-= ",
-                                                            " QWERTYUIOP[]\\",
-                                                            " ASDFGHJKL;' ",
-                                                            " ZXCVBNM,./ ").AsDisplayedLine(KeyboardColor, BackgroundColor),
-                FiggleFonts.Italic.RenderIEnumerable("By:  Daniel  Aguirre").AsDisplayedLine(FontColor, BackgroundColor)
-                .Append(new("Press any key to continue.", FontColor, BackgroundColor))
+        private ConsoleColor _signatureColor;
+
+        private const int _borderWidth = 86;
+
+        private const int _borderHeight = 27;
+
+        private static readonly DisplayedSection Header = 
+            new(ConsoleColor.Green, _backgroundColor, FiggleFonts.SlantSmall, "Typing  Practice");
+
+        private static readonly DisplayedSection KeyboardSection =
+            new(ConsoleColor.Cyan, _backgroundColor, FiggleFonts.KeyboardSmall, "~1234567890-= ",
+                                                                             " QWERTYUIOP[]\\",
+                                                                             " ASDFGHJKL;' ",
+                                                                             " ZXCVBNM,./ ");
+        private DisplayedSection Signature =>
+            new(_signatureColor, _backgroundColor, FiggleFonts.CyberMedium, "By: Daniel Aguirre");
+
+        private static DisplayedSection PromptToClickKey =
+            new(ConsoleColor.Cyan, _backgroundColor,"", "Press Any Key To Continue.");
+
+        public override long RefreshRatioInMilliseconds => 60;
+
+        public override void TriggerRefresh()
+        {
+            base.TriggerRefresh();
+
+            _signatureColor = (_signatureColor) switch
+            {
+                ConsoleColor.Cyan => ConsoleColor.Blue,
+                ConsoleColor.Blue => ConsoleColor.DarkBlue,
+                ConsoleColor.DarkBlue => ConsoleColor.DarkGreen,
+                ConsoleColor.DarkGreen => ConsoleColor.Green,
+                ConsoleColor.Green => ConsoleColor.Yellow,
+                ConsoleColor.Yellow => ConsoleColor.DarkYellow,
+                ConsoleColor.DarkYellow => ConsoleColor.Red,
+                ConsoleColor.Red => ConsoleColor.DarkRed,
+                ConsoleColor.DarkRed => ConsoleColor.Magenta,
+                ConsoleColor.DarkMagenta => ConsoleColor.DarkGray,
+                ConsoleColor.DarkGray => ConsoleColor.Gray,
+                ConsoleColor.Gray => ConsoleColor.White,
+                _ => ConsoleColor.Cyan
+            };
+        }
+
+        public override DisplayedSection GetDisplay() => 
+            new BasicBorder(_borderColor, _backgroundColor, _borderWidth, _borderHeight,
+                Header, KeyboardSection, Signature, PromptToClickKey
             )
-            .PadToCenterOfConsole(BackgroundColor)
-        );
+            .ToDisplayedSection()
+            .Centered(_backgroundColor);
 
         public override Screen GetNextScreen() => new MainMenu();
     }
