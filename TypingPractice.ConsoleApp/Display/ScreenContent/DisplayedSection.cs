@@ -1,11 +1,12 @@
-﻿
-using Figgle;
+﻿using Figgle;
 using TypingPractice.ConsoleApp.Extensions;
 
 namespace TypingPractice.ConsoleApp.Display.ScreenContent
 {
     public class DisplayedSection : List<DisplayedLine>
     {
+        #region Constructors 
+
         public DisplayedSection() { }
 
         public DisplayedSection(ConsoleColor fontColor, ConsoleColor backgroundColor, FiggleFont font, params string[] text)             
@@ -23,7 +24,7 @@ namespace TypingPractice.ConsoleApp.Display.ScreenContent
         {
             foreach (var line in linesToDisplay)
             {
-                Add(new (line, fontColor, backgroundColor));
+                Add(new DisplayedLine(line, fontColor, backgroundColor));
             }
         }
 
@@ -39,6 +40,10 @@ namespace TypingPractice.ConsoleApp.Display.ScreenContent
                 AddRange(section);
             }
         }
+
+        #endregion
+
+        #region Methods For Centering Displayed Section
 
         public DisplayedSection Centered(ConsoleColor backgroundColor) => Centered(backgroundColor, Console.WindowWidth, Console.WindowHeight - 1);
 
@@ -57,15 +62,13 @@ namespace TypingPractice.ConsoleApp.Display.ScreenContent
 
             var maxWidth = this.Max(_ => _.Width);
 
-            var paddingLine = new DisplayedLine(' ', maxWidth, backgroundColor, backgroundColor);
-
             while (Count < height)
             {
-                Add(paddingLine);
+                Add(new DisplayedLine(' ', maxWidth, backgroundColor, backgroundColor));
 
                 if (Count < height)
                 {
-                    Insert(0, paddingLine);
+                    Insert(0, new DisplayedLine(' ', maxWidth, backgroundColor, backgroundColor));
                 }
             }
 
@@ -78,6 +81,13 @@ namespace TypingPractice.ConsoleApp.Display.ScreenContent
         {
             foreach (var line in this)
             {
+                if (line.Width > width)
+                {
+                    var offendingString = new string(line.Select(_ => _.Value).Aggregate((a, b) => a += b));
+
+                    throw new ArgumentOutOfRangeException($"Cannot Center DisplayedSection. Line exceeds width {width} - Offending Line ({offendingString.Length}): {offendingString}");
+                }
+
                 var leftPaddingSize = (width - line.Width) / 2;
 
                 var rightPaddingSize = width - line.Width - leftPaddingSize;
@@ -85,6 +95,27 @@ namespace TypingPractice.ConsoleApp.Display.ScreenContent
                 line.Insert(0, new(' ', leftPaddingSize, backgroundColor, backgroundColor));
 
                 line.Add(new(' ', rightPaddingSize, backgroundColor, backgroundColor));
+            }
+
+            return this;
+        }
+
+        #endregion
+    
+        public DisplayedSection AddRightSideSection(ConsoleColor paddingColor, DisplayedSection rightSection)
+        {
+            if (Count < rightSection.Count)
+            {
+                CenteredVertical(paddingColor, rightSection.Count);
+            }
+            else if (rightSection.Count < Count)
+            {
+                rightSection = rightSection.CenteredVertical(paddingColor, Count);
+            }
+
+            for (int i = 0; i < Count; i++)
+            {
+                this[i] += rightSection.ElementAt(i);
             }
 
             return this;

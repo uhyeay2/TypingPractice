@@ -3,11 +3,9 @@ using TypingPractice.ConsoleApp.Screens.SplashScreens;
 
 namespace TypingPractice.ConsoleApp.Screens.Menus
 {
-    public class MainMenu : ScrollingMenuDefaultScreen
+    public class MainMenu : DefaultScrollingMenu
     {
         public override string MenuTitle => "Main Menu";
-
-        public override int GetOptionsBorderWidth() => 90;
 
         public override IEnumerable<(string OptionMessage, Screen NextScreen)> GetOptions() =>
         [

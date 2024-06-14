@@ -1,48 +1,67 @@
-﻿using Figgle;
-using TypingPractice.ConsoleApp.Extensions;
-using TypingPractice.ConsoleApp.UserInterface;
+﻿using TypingPractice.ConsoleApp.Display.ScreenContent;
 
 namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 {
     public abstract class ScrollingMenu : Screen
     {
-        #region Abstract Method For Defining Options/Screens For The Menu
-
-        protected abstract string MenuTitle { get; }
-
         public abstract IEnumerable<(string OptionMessage, Screen NextScreen)> GetOptions();
 
-        #endregion
+        public abstract int CountOfOptionsToShow { get; }
 
-        #region Overrideable Methods For Defining Screen Content Above/Below Menu
+        public abstract DisplayedSection FormatSelectedOption(string option);
+            
+        public abstract DisplayedSection FormatNonSelectedOption(string option);
 
-        public virtual IEnumerable<string> GenerateContentAboveMenu() =>
-            FiggleFonts.SlantSmall.RenderIEnumerable("Typing Practice").Concat(
-            FiggleFonts.KeyboardSmall.RenderIEnumerable(MenuTitle));
-        
-        public virtual IEnumerable<string> GenerateContentBelowMenu() => ["", "By: Daniel Aguirre"];
+        public abstract DisplayedSection GetDisplayedContent(DisplayedSection formattedOptions);
 
-        #endregion
+        public DisplayedSection GetFormattedOptions(IEnumerable<string> optionMessages, int currentIndex)
+        {
+            IEnumerable<string> optionsBeforeSelectedOption, optionsAfterSelectedOption;
 
-        #region Overrideable Methods For Formatting Menu Screen
+            //TODO: Fix the logical error in here that causes the wrong number of options to be presented (see when more than three options shown)
+            if (currentIndex == 0)
+            {
+                optionsBeforeSelectedOption = [];
+                optionsAfterSelectedOption = optionMessages.Skip(1).Take(CountOfOptionsToShow - 1);
+            }
+            else if (currentIndex == optionMessages.Count() - 1)
+            {
+                optionsBeforeSelectedOption = optionMessages.TakeLast(CountOfOptionsToShow).SkipLast(1);
+                optionsAfterSelectedOption = [];
+            }
+            else
+            {
+                var firstElementToShow = currentIndex - (CountOfOptionsToShow / 2);
 
-        public virtual int GetOptionsBorderWidth() => 100;
+                optionsBeforeSelectedOption = optionMessages.Skip(firstElementToShow).Take(CountOfOptionsToShow / 2);
 
-        public virtual int GetOptionsBorderHeight() => 14;
+                var countOfOptionsBeforeSelectedOption = optionsBeforeSelectedOption.Count();
 
-        public virtual int GetCountOfOptionsToShow() => 3;
+                optionsAfterSelectedOption = optionMessages.Skip(currentIndex + 1).Take(CountOfOptionsToShow - (countOfOptionsBeforeSelectedOption + 1));
+            }
 
-        public IEnumerable<string> FormatSelectedOption(string option) =>
-            FiggleFonts.Doom.RenderIEnumerable(">  ")
-            .MergeToRight(FiggleFonts.Doom.RenderIEnumerable(option))
-            .MergeToRight(FiggleFonts.Doom.RenderIEnumerable("  <"));
+            var displayedSection = new DisplayedSection();
 
-        public IEnumerable<string> FormatNonSelectedOption(string option) =>
-            FiggleFonts.CyberMedium.RenderIEnumerable(option);
+            if (optionsBeforeSelectedOption.Any())
+            {
+                foreach (var optionSection in optionsBeforeSelectedOption.Select(FormatNonSelectedOption))
+                {
+                    displayedSection.AddRange(optionSection);
+                }
+            }
 
-        #endregion
+            displayedSection.AddRange(FormatSelectedOption(optionMessages.ElementAt(currentIndex)));
 
-        #region Implementation For Printing Menu And Selecting Next Screen
+            if (optionsAfterSelectedOption.Any())
+            {
+                foreach (var optionSection in optionsAfterSelectedOption.Select(FormatNonSelectedOption))
+                {
+                    displayedSection.AddRange(optionSection);
+                }
+            }
+
+            return displayedSection;
+        }
 
         public override Screen DisplayScreenAndGetNext()
         {
@@ -60,74 +79,34 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
             {
                 Console.SetCursorPosition(0, 0);
 
-                _consoleWriter.WriteLines(_contentBuilder.New(_ => _.AddContent(
-                    Center.HorizontalByConsoleWidth(
-                        GenerateContentAboveMenu(),
-                        GenerateMenuOptions(optionMessages, currentIndex),
-                        GenerateContentBelowMenu()
-                ))));
+                var formattedOptions = GetFormattedOptions(optionMessages, currentIndex);
+
+                new DisplayedScreen(GetDisplayedContent(formattedOptions)).Write();
 
                 var input = Console.ReadKey(true).Key;
 
                 switch (input)
                 {
-                    case ConsoleKey.Enter: selectionMade = true;
-                    break;
+                    case ConsoleKey.Enter:
+                        selectionMade = true;
+                        break;
 
                     // 0 goes to max, everything else goes down
-                    case ConsoleKey.UpArrow: currentIndex = currentIndex == 0 ? maxIndex : --currentIndex;
-                    break;
+                    case ConsoleKey.UpArrow:
+                        currentIndex = currentIndex == 0 ? maxIndex : --currentIndex;
+                        break;
 
                     // max goes to 0, everything else goes up
-                    case ConsoleKey.DownArrow: currentIndex = currentIndex == maxIndex ? 0 : ++currentIndex;
-                    break;
+                    case ConsoleKey.DownArrow:
+                        currentIndex = currentIndex == maxIndex ? 0 : ++currentIndex;
+                        break;
 
                     default:
-                    break;
+                        break;
                 }
             }
 
             return options.ElementAt(currentIndex).NextScreen;
         }
-
-        #endregion
-
-        #region Private Method For Logic To Generate Menu Options
-
-        private IEnumerable<string> GenerateMenuOptions(IEnumerable<string> options, int currentIndex)
-        {
-            var selectedOption = options.ElementAt(currentIndex);
-
-            IEnumerable<string> optionsBeforeSelectedOption, optionsAfterSelectedOption;
-
-            if (currentIndex == 0)
-            {
-                optionsBeforeSelectedOption = [];
-                optionsAfterSelectedOption = options.Skip(1).Take(GetCountOfOptionsToShow() - 1);
-            }
-            else if (currentIndex == options.Count() - 1)
-            {
-                optionsBeforeSelectedOption = options.TakeLast(GetCountOfOptionsToShow()).SkipLast(1);
-                optionsAfterSelectedOption = [];
-            }
-            else
-            {
-                var firstElementToShow = currentIndex - (GetCountOfOptionsToShow() / 2);
-
-                optionsBeforeSelectedOption = options.Skip(firstElementToShow).Take(GetCountOfOptionsToShow() / 2);
-
-                var countOfOptionsBeforeSelectedOption = optionsBeforeSelectedOption.Count();
-
-                optionsAfterSelectedOption = options.Skip(currentIndex + 1).Take(GetCountOfOptionsToShow() - (countOfOptionsBeforeSelectedOption + 1));
-            }
-
-            return Border.Apply(GetOptionsBorderWidth(), Center.Vertical(GetOptionsBorderHeight(),
-                optionsBeforeSelectedOption.Any() ? optionsBeforeSelectedOption.Select(FormatNonSelectedOption).Aggregate((a, b) => a.Concat(b)) : [],
-                FormatSelectedOption(selectedOption),
-                optionsAfterSelectedOption.Any() ? optionsAfterSelectedOption.Select(FormatNonSelectedOption).Aggregate((a, b) => a.Concat(b)) : []
-            ));
-        }
-
-        #endregion
     }
 }

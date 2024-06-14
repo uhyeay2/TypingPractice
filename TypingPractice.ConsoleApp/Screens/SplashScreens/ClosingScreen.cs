@@ -1,27 +1,40 @@
 ﻿using Figgle;
-using TypingPractice.ConsoleApp.Borders;
+using TypingPractice.ConsoleApp.Display.BorderedSection;
+using TypingPractice.ConsoleApp.Display.ScreenContent;
 using TypingPractice.ConsoleApp.Extensions;
 using TypingPractice.ConsoleApp.Screens.BaseScreens;
-using TypingPractice.ConsoleApp.UserInterface;
 
 namespace TypingPractice.ConsoleApp.Screens.SplashScreens
 {
-    public class ClosingScreen : AnyKeyToContinueScreen
+    public class ClosingScreen : RefreshUntilAnyKeyToContinue
     {
-        private const ConsoleColor KeyboardColor = ConsoleColor.Cyan;
+        private const int _borderWidth = 100;
 
-        private static readonly BaseBorder _border = new StandardBorder(BorderColor, BackgroundColor);
+        private const int _borderHeight = 28;
 
-        public override DisplayedContent GetScreenContent() => new(
-             _border.Apply(
-                FiggleFonts.SlantSmall.RenderIEnumerable("Typing  Practice").AsDisplayedLine(FontColor, BackgroundColor),
-                FiggleFonts.KeyboardSmall.RenderIEnumerable("THANK YOU",
-                                                            "FOR PLAYING",
-                                                            "TYPING PRACTICE",
-                                                            "COME BACK SOON!").AsDisplayedLine(KeyboardColor, BackgroundColor),
-                FiggleFonts.Italic.RenderIEnumerable("By:  Daniel  Aguirre").AsDisplayedLine(FontColor, BackgroundColor)
-            )
-            .PadToCenterOfConsole(BackgroundColor)
+        private ConsoleColor _signatureColor;
+
+        public override long RefreshRatioInMilliseconds => 60;
+
+        public override void TriggerRefresh()
+        {
+            base.TriggerRefresh();
+
+            _signatureColor = _signatureColor.CycleColor();
+        }
+
+        public override DisplayedSection GetDisplay() => new(
+            new BasicBorder(PrimaryBorderColor, BackgroundColor, _borderWidth, _borderHeight, 
+                new DisplayedSection(
+                    new DisplayedSection(PrimaryFontColor, BackgroundColor, FiggleFonts.SlantSmall, "Typing  Practice"),
+                    new DisplayedSection(SecondaryFontColor, BackgroundColor, FiggleFonts.KeyboardSmall, "THANK YOU",
+                                                                                                         "FOR PLAYING",
+                                                                                                         "TYPING PRACTICE",
+                                                                                                         "COME BACK SOON!"),
+                    new DisplayedSection(_signatureColor, BackgroundColor, FiggleFonts.CyberMedium, "", "By: Daniel Aguirre")
+                )
+            ).ToDisplayedSection()
+            .Centered(BackgroundColor)
         );
 
         public override Screen GetNextScreen() => this;

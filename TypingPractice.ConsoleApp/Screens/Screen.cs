@@ -1,21 +1,29 @@
-﻿using TypingPractice.ConsoleApp.Borders;
-using TypingPractice.ConsoleApp.UserInterface;
+﻿using TypingPractice.ConsoleApp.Display.ScreenContent;
 
 namespace TypingPractice.ConsoleApp.Screens
 {
     public abstract class Screen
     {
-        protected static readonly ConsoleWriter _consoleWriter = new();
+        protected static ConsoleColor BackgroundColor { get; set; } = ConsoleColor.Black;
 
-        protected static readonly ScreenContentBuilder _contentBuilder = new();
+        protected static ConsoleColor PrimaryFontColor { get; set; } = ConsoleColor.Green;
 
-        protected const ConsoleColor BorderColor = ConsoleColor.Red;
+        protected static ConsoleColor SecondaryFontColor { get; set; } = ConsoleColor.Cyan;
 
-        protected const ConsoleColor BackgroundColor = ConsoleColor.Black;
+        protected static ConsoleColor PrimaryBorderColor { get; set; } = ConsoleColor.Red;
 
-        protected const ConsoleColor FontColor = ConsoleColor.Green;
+        public static void Print(DisplayedSection content, bool clearScreen = false)
+        {
+            if (clearScreen)
+            {
+                Console.Clear();
+            }
 
-        protected static readonly BaseBorder _defaultBorder = new StandardBorder(BorderColor, BackgroundColor);
+            foreach (var line in content)
+            {
+                line.Write();
+            }
+        }
 
         public abstract Screen DisplayScreenAndGetNext();
     }

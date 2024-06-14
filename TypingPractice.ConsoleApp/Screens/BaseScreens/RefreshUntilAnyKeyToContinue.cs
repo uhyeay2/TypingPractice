@@ -1,6 +1,4 @@
 ﻿using System.Diagnostics;
-using TypingPractice.ConsoleApp.Display.ScreenContent;
-
 namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 {
     public abstract class RefreshUntilAnyKeyToContinue : AnyKeyToContinue
@@ -19,7 +17,7 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 
             stopWatch.Start();
 
-            new DisplayedScreen(GetDisplay()).ClearThenWrite();
+            Print(GetDisplay(), clearScreen: true);
             
             while (!Console.KeyAvailable)
             {
@@ -29,7 +27,7 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 
                     Console.SetCursorPosition(0, 0);
 
-                    new DisplayedScreen(GetDisplay()).Write();
+                    Print(GetDisplay());
 
                     stopWatch.Restart();
                 }

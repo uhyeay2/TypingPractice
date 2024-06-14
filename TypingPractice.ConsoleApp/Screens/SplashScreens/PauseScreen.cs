@@ -1,28 +1,29 @@
-﻿using Figgle;
-using TypingPractice.ConsoleApp.Extensions;
+﻿using TypingPractice.ConsoleApp.Display.ScreenContent;
 using TypingPractice.ConsoleApp.Screens.BaseScreens;
 
 namespace TypingPractice.ConsoleApp.Screens.SplashScreens
 {
-    public class PauseScreen : ScrollingMenu
+    public class PauseScreen : DefaultScrollingMenu
     {
         private readonly Screen _screenToResumeTo, _screenToQuitTo;
 
-        private readonly IEnumerable<string> _contentAboveOptions;
+        private readonly DisplayedSection _contentAboveMenu;
 
-        public PauseScreen(Screen screenToReturnTo, Screen menuToQuitTo, IEnumerable<string>? contentAboveOptions = null)
+        public PauseScreen(Screen screenToReturnTo, Screen menuToQuitTo, DisplayedSection? contentAboveMenu = null)
         {
             _screenToResumeTo = screenToReturnTo;
 
             _screenToQuitTo = menuToQuitTo;
 
-            _contentAboveOptions = contentAboveOptions ?? [];
+            _contentAboveMenu = contentAboveMenu ?? [];
         }
 
-        protected override string MenuTitle => "Pause Menu";
+        public override string MenuTitle => "Pause Menu";
 
-        public override IEnumerable<string> GenerateContentAboveMenu() =>
-            FiggleFonts.SlantSmall.RenderIEnumerable("Pause").Concat(_contentAboveOptions);
+        public override DisplayedSection Header() => new (
+            base.Header(), 
+            _contentAboveMenu
+        );
 
         public override int GetOptionsBorderWidth() => 60;
 

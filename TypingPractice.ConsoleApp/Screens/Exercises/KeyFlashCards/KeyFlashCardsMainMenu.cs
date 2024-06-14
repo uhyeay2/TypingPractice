@@ -4,9 +4,11 @@ using TypingPractice.ConsoleApp.Screens.SplashScreens;
 
 namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
 {
-    public class KeyFlashCardsMainMenu : ScrollingMenu
+    public class KeyFlashCardsMainMenu : DefaultScrollingMenu
     {
-        protected override string MenuTitle => "Key Flash Cards";
+        public override string MenuTitle => "Key Flash Cards";
+
+        public override int GetOptionsBorderWidth() => 100;
 
         public override IEnumerable<(string OptionMessage, Screen NextScreen)> GetOptions() =>
         [

@@ -10,9 +10,7 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 
         public override Screen DisplayScreenAndGetNext()
         {
-            var screen = new DisplayedScreen(GetDisplay());
-                
-            screen.ClearThenWrite();
+            Print(GetDisplay(), clearScreen: true);
 
             Console.ReadKey(true);
 

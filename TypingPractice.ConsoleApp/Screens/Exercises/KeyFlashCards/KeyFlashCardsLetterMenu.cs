@@ -4,9 +4,9 @@ using TypingPractice.ConsoleApp.Screens.SplashScreens;
 
 namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
 {
-    internal class KeyFlashCardsLetterMenu : ScrollingMenu
+    internal class KeyFlashCardsLetterMenu : DefaultScrollingMenu
     {
-        protected override string MenuTitle => "Letters Flash Cards";
+        public override string MenuTitle => "Letters Flash Cards";
 
         public override int GetOptionsBorderWidth() => 110;
 

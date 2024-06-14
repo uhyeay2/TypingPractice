@@ -4,7 +4,7 @@ using TypingPractice.ConsoleApp.Screens.SplashScreens;
 
 namespace TypingPractice.ConsoleApp.Screens.Menus
 {
-    public class DrillsMenu : ScrollingMenuDefaultScreen
+    public class DrillsMenu : DefaultScrollingMenu
     {
         public override string MenuTitle => "Typing Drills";
 
