@@ -9,7 +9,7 @@ namespace TypingPractice.ConsoleApp.Display.ScreenContent
 
         public DisplayedSection() { }
 
-        public DisplayedSection(ConsoleColor fontColor, ConsoleColor backgroundColor, FiggleFont font, params string[] text)             
+        public DisplayedSection(ConsoleColor fontColor, ConsoleColor backgroundColor, FiggleFont font, params string[] text)
         {
             foreach (var t in text)
             {

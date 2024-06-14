@@ -20,10 +20,7 @@ namespace TypingPractice.ConsoleApp.Screens.SplashScreens
 
         public override string MenuTitle => "Pause Menu";
 
-        public override DisplayedSection Header() => new (
-            base.Header(), 
-            _contentAboveMenu
-        );
+        public override DisplayedSection Header() => new (base.Header(), _contentAboveMenu);
 
         public override int GetOptionsBorderWidth() => 60;
 

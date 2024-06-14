@@ -4,37 +4,6 @@ namespace TypingPractice.ConsoleApp.Extensions
 {
     public static class FiggleFontExtensions
     {       
-        public static IEnumerable<UserInterface.DisplayedLine> Render(this FiggleFont font, ConsoleColor fontColor, ConsoleColor backgroundColor, string content, int? targetHeight = null)
-        {
-            var formattedContent = font.RenderIEnumerable(content, targetHeight);
-
-            return formattedContent.Select(_ => new UserInterface.DisplayedLine(_, fontColor, backgroundColor));
-        }
-
-        public static IEnumerable<string> RenderIEnumerable(this FiggleFont font, int targetHeight, params string[] content)
-        {
-            var figgledContent = RenderIEnumerable(font, content);
-
-            var currentHeight = figgledContent.Count();
-
-            if (currentHeight < targetHeight)
-            {
-                var topPaddingSize = (targetHeight - currentHeight) / 2;
-                var bottomPaddingSize = targetHeight - (currentHeight + topPaddingSize);
-
-                return Enumerable.Repeat("", topPaddingSize)
-                                 .Concat(figgledContent)
-                                 .Concat(Enumerable.Repeat("", bottomPaddingSize));
-            }
-
-            return figgledContent;
-        }
-
-        public static IEnumerable<string> RenderIEnumerable(this FiggleFont font, params string[] content)
-        {
-            return content.Select(_ => font.RenderIEnumerable(_)).Aggregate((a, b) => a.Concat(b));
-        }
-
         public static IEnumerable<string> RenderIEnumerable(this FiggleFont font, string content, int? targetHeight = null)
         {
             // Return Blank Line when content to apply FiggleFont to is null/empty/whitespace.

@@ -7,6 +7,8 @@ namespace TypingPractice.ConsoleApp.Screens.Menus
     {
         public override string MenuTitle => "Main Menu";
 
+        public override int GetOptionsBorderWidth() => 47;
+
         public override IEnumerable<(string OptionMessage, Screen NextScreen)> GetOptions() =>
         [
             //("Lessons", new LessonsMenu()),

@@ -10,8 +10,6 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 
         public virtual int GetOptionsBorderWidth() => 70;
 
-        public virtual bool IsStrictOptionsBorderWidth() => true;
-
         public virtual int GetOptionsBorderHeight() => 16;
 
         public virtual DisplayedSection Header() => new(

@@ -1,47 +1,13 @@
 ﻿using System.Diagnostics;
 using TypingPractice.ConsoleApp.Models;
-using TypingPractice.ConsoleApp.Screens.SplashScreens;
-using TypingPractice.ConsoleApp.Display.ScreenContent;
 
 namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 {
-    public abstract class ExerciseScreen : Screen
+    public abstract class ExerciseScreen : RefreshableScreen
     {
-        public abstract PauseScreen GetPauseScreen();
+        protected bool KeepTyping = true;
 
-        public abstract long RefreshRatioInMilliseconds { get; }
-        
-        private long _refreshCount;
-
-        protected long RefreshCount => _refreshCount;
-
-        public virtual void TriggerRefresh() => _refreshCount = _refreshCount == long.MaxValue ? 0 : _refreshCount + 1;
-
-        protected string ElapsedExerciseTime => $"{ExerciseStopwatch.Elapsed:hh}:{ExerciseStopwatch.Elapsed:mm}:{ExerciseStopwatch.Elapsed:ss}.{ExerciseStopwatch.Elapsed:ff}";
-
-        public virtual void StartExercise()
-        {
-            KeepTyping = true;
-
-            Print(GetDisplayBeforeExercise(), clearScreen: true);
-
-            Console.ReadKey(true);
-
-            ExerciseStopwatch.Start();
-        }
-
-        public abstract void StartExerciseLoop();
-
-        public abstract DisplayedSection GetDisplayDuringExercise();
-
-        public abstract DisplayedSection GetDisplayBeforeExercise();
-
-        public virtual void StopExercise()
-        {
-            ExpectedCharacter = null;
-            LastKeyTyped = null;
-            ExerciseStopwatch.Stop();
-        }
+        public override long RefreshRatioInMilliseconds { get; } = 5;
 
         protected List<KeyTypedStat> KeysTyped = [];
 
@@ -49,36 +15,56 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 
         protected char? ExpectedCharacter;
 
-        protected Stopwatch ExerciseStopwatch = new();
-        
         protected Stopwatch KeyStrokeStopwatch = new();
 
-        protected bool KeepTyping = true;
+        protected Stopwatch ExerciseStopwatch = new();
 
-        public virtual void CaptureInput()
+        protected string ElapsedExerciseTime => $"{ExerciseStopwatch.Elapsed:hh}:{ExerciseStopwatch.Elapsed:mm}:{ExerciseStopwatch.Elapsed:ss}.{ExerciseStopwatch.Elapsed:ff}";
+
+        public abstract void StartExerciseLoop();
+
+        public override Screen DisplayScreenAndGetNext()
+        {
+            StartExercise();
+
+            while (KeepTyping)
+            {
+                Console.SetCursorPosition(0, 0);
+
+                StartExerciseLoop();
+
+                Print(GetDisplay());
+
+                RefreshUntilKeyAvailable();
+
+                ProcessInput(Console.ReadKey(true));
+            }
+
+            StopExercise();
+
+            return GetNextScreen();
+        }
+
+        public virtual void StartExercise()
+        {
+            KeepTyping = true;
+
+            Print(GetDisplay(), clearScreen: true);
+
+            Console.ReadKey(true);
+
+            ExerciseStopwatch.Start();
+        }
+
+        public override void RefreshUntilKeyAvailable()
         {
             KeyStrokeStopwatch.Restart();
 
-            var refreshingStopWatch = new Stopwatch();
+            base.RefreshUntilKeyAvailable();
+        }
 
-            refreshingStopWatch.Start();
-
-            while (!Console.KeyAvailable)
-            {
-                if (refreshingStopWatch.ElapsedMilliseconds >= RefreshRatioInMilliseconds)
-                {
-                    TriggerRefresh();
-
-                    Console.SetCursorPosition(0, 0);
-
-                    Print(GetDisplayDuringExercise());
-
-                    refreshingStopWatch.Restart();
-                }
-            }
-
-            var input = Console.ReadKey(true);
-
+        public virtual void ProcessInput(ConsoleKeyInfo input)
+        {
             var milliseconds = KeyStrokeStopwatch.Elapsed.TotalMilliseconds;
 
             if (input.Key == ConsoleKey.Escape || input.Key == ConsoleKey.Enter)
@@ -93,24 +79,11 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
             }
         }
 
-        public override Screen DisplayScreenAndGetNext()
+        public virtual void StopExercise()
         {
-            StartExercise();
-
-            while (KeepTyping)
-            {
-                Console.SetCursorPosition(0, 0);
-
-                StartExerciseLoop();
-
-                Print(GetDisplayDuringExercise());
-
-                CaptureInput();
-            }
-
-            StopExercise();
-
-            return GetPauseScreen();
+            ExpectedCharacter = null;
+            LastKeyTyped = null;
+            ExerciseStopwatch.Stop();
         }
     }
 }
