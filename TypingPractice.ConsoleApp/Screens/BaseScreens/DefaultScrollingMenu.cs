@@ -19,7 +19,7 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
             new DisplayedSection(SecondaryFontColor, BackgroundColor, FiggleFonts.KeyboardSmall, MenuTitle)
         );
 
-        public virtual DisplayedSection Footer() => new(PrimaryFontColor, BackgroundColor, "", "By: Daniel Aguirre");
+        public virtual DisplayedSection Footer() => [];
 
         public abstract string MenuTitle { get; }
 
