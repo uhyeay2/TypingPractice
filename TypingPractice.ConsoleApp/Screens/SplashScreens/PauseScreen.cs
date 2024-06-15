@@ -26,7 +26,7 @@ namespace TypingPractice.ConsoleApp.Screens.SplashScreens
 
         public override int GetOptionsBorderHeight() => 10;
 
-        public override IEnumerable<(string OptionMessage, Screen NextScreen)> GetOptions() =>
+        public override (string OptionMessage, Screen NextScreen)[] NextScreenOptions =>
         [
             ("Resume", _screenToResumeTo),
             ("Quit", _screenToQuitTo),

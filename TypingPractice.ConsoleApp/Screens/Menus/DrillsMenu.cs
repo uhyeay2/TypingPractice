@@ -8,7 +8,7 @@ namespace TypingPractice.ConsoleApp.Screens.Menus
     {
         public override string MenuTitle => "Typing Drills";
 
-        public override IEnumerable<(string OptionMessage, Screen NextScreen)> GetOptions() =>
+        public override (string OptionMessage, Screen NextScreen)[] NextScreenOptions =>
         [
             ("Key Drills", new KeyFlashCardsMainMenu()),
             ("Previous", new MainMenu()),

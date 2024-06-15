@@ -2,11 +2,13 @@
 
 namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 {
-    public abstract class ScrollingMenu : Screen
+    public abstract class ScrollingMenu : RefreshableScreen
     {
-        public abstract IEnumerable<(string OptionMessage, Screen NextScreen)> GetOptions();
+        public abstract (string OptionMessage, Screen NextScreen)[] NextScreenOptions { get; }
 
         public abstract int CountOfOptionsToShow { get; }
+
+        private int _currentIndex = 0;
 
         public abstract DisplayedSection FormatSelectedOption(string option);
             
@@ -14,30 +16,32 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 
         public abstract DisplayedSection GetDisplayedContent(DisplayedSection formattedOptions);
 
-        public DisplayedSection GetFormattedOptions(IEnumerable<string> optionMessages, int currentIndex)
+        public DisplayedSection GetFormattedOptions()
         {
+            var optionMessages = NextScreenOptions.Select(_ => _.OptionMessage);
+
             IEnumerable<string> optionsBeforeSelectedOption, optionsAfterSelectedOption;
 
             //TODO: Fix the logical error in here that causes the wrong number of options to be presented (see when more than three options shown)
-            if (currentIndex == 0)
+            if (_currentIndex == 0)
             {
                 optionsBeforeSelectedOption = [];
                 optionsAfterSelectedOption = optionMessages.Skip(1).Take(CountOfOptionsToShow - 1);
             }
-            else if (currentIndex == optionMessages.Count() - 1)
+            else if (_currentIndex == optionMessages.Count() - 1)
             {
                 optionsBeforeSelectedOption = optionMessages.TakeLast(CountOfOptionsToShow).SkipLast(1);
                 optionsAfterSelectedOption = [];
             }
             else
             {
-                var firstElementToShow = currentIndex - (CountOfOptionsToShow / 2);
+                var firstElementToShow = _currentIndex - (CountOfOptionsToShow / 2);
 
                 optionsBeforeSelectedOption = optionMessages.Skip(firstElementToShow).Take(CountOfOptionsToShow / 2);
 
                 var countOfOptionsBeforeSelectedOption = optionsBeforeSelectedOption.Count();
 
-                optionsAfterSelectedOption = optionMessages.Skip(currentIndex + 1).Take(CountOfOptionsToShow - (countOfOptionsBeforeSelectedOption + 1));
+                optionsAfterSelectedOption = optionMessages.Skip(_currentIndex + 1).Take(CountOfOptionsToShow - (countOfOptionsBeforeSelectedOption + 1));
             }
 
             var displayedSection = new DisplayedSection();
@@ -50,7 +54,7 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
                 }
             }
 
-            displayedSection.AddRange(FormatSelectedOption(optionMessages.ElementAt(currentIndex)));
+            displayedSection.AddRange(FormatSelectedOption(optionMessages.ElementAt(_currentIndex)));
 
             if (optionsAfterSelectedOption.Any())
             {
@@ -63,25 +67,21 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
             return displayedSection;
         }
 
+        public override DisplayedSection GetDisplay() => GetDisplayedContent(GetFormattedOptions());
+
         public override Screen DisplayScreenAndGetNext()
         {
             Console.Clear();
 
-            var options = GetOptions();
-            var optionMessages = options.Select(_ => _.OptionMessage);
-            var screens = options.Select(_ => _.NextScreen);
+            var maxIndex = NextScreenOptions.Length - 1;
 
-            var currentIndex = 0;
-            var maxIndex = options.Count() - 1;
             var selectionMade = false;
 
             while (!selectionMade)
             {
                 Console.SetCursorPosition(0, 0);
 
-                var formattedOptions = GetFormattedOptions(optionMessages, currentIndex);
-
-                new DisplayedScreen(GetDisplayedContent(formattedOptions)).Write();
+                RefreshUntilKeyAvailable();
 
                 var input = Console.ReadKey(true).Key;
 
@@ -93,12 +93,12 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 
                     // 0 goes to max, everything else goes down
                     case ConsoleKey.UpArrow:
-                        currentIndex = currentIndex == 0 ? maxIndex : --currentIndex;
+                        _currentIndex = _currentIndex == 0 ? maxIndex : --_currentIndex;
                         break;
 
                     // max goes to 0, everything else goes up
                     case ConsoleKey.DownArrow:
-                        currentIndex = currentIndex == maxIndex ? 0 : ++currentIndex;
+                        _currentIndex = _currentIndex == maxIndex ? 0 : ++_currentIndex;
                         break;
 
                     default:
@@ -106,7 +106,7 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
                 }
             }
 
-            return options.ElementAt(currentIndex).NextScreen;
+            return NextScreenOptions[_currentIndex].NextScreen;
         }
     }
 }

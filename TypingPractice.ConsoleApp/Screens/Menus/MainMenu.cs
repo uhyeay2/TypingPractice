@@ -9,7 +9,9 @@ namespace TypingPractice.ConsoleApp.Screens.Menus
 
         public override int GetOptionsBorderWidth() => 47;
 
-        public override IEnumerable<(string OptionMessage, Screen NextScreen)> GetOptions() =>
+        public override int GetOptionsBorderHeight() => 12;
+
+        public override (string OptionMessage, Screen NextScreen)[] NextScreenOptions =>
         [
             //("Lessons", new LessonsMenu()),
             //("Adventure", new AdventureMenu()),

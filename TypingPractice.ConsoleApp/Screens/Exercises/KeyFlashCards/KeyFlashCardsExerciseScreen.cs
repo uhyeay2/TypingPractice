@@ -22,7 +22,7 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
 
         private const int BottomLeftBorderHeight = 18;
 
-        private const int ScoresBorderHeight = 5;
+        private const int ScoresBorderHeight = 8;
 
         private const int ResponsiveMessageHeight = 11;
 
@@ -67,8 +67,8 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
             );
 
         private DisplayedSection GetRightSideScreenContent(char? c, KeyTypedStat? lastKeyTyped) => new(
-            new DisplayedSection(SecondaryFontColor, BackgroundColor, "", $"Timer: {ElapsedExerciseTime}"), 
-            new DisplayedSection(PrimaryFontColor, BackgroundColor, FiggleFonts.SlantSmall, "Score", ""),
+            new DisplayedSection(SecondaryFontColor, BackgroundColor, "  Key Flash Cards  "), 
+            new DisplayedSection(PrimaryFontColor, BackgroundColor, FiggleFonts.CyberMedium, "Score", ""),
             new BasicBorder(SecondaryFontColor, BackgroundColor, InnerBorderWidth, ScoresBorderHeight,GenerateScoresContent()).ToDisplayedSection(),
             new DisplayedSection(InputBasedColor(c, lastKeyTyped), BackgroundColor, FiggleFonts.SlantSmall, GetPromptMessage(c, lastKeyTyped)).CenteredVertical(BackgroundColor, ResponsiveMessageHeight)
         );
@@ -110,7 +110,9 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
 
             if (countOfKeysTyped == 0)
             {     
-                return new(SecondaryFontColor, BackgroundColor,                     
+                return new(SecondaryFontColor, BackgroundColor,
+                    "", 
+                    $"Timer: {ElapsedExerciseTime}", 
                     "", 
                     "Avg Speed: N/A",
                     "",
@@ -120,8 +122,10 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
 
             var countOfCorrectKeysTyped = KeysTyped.Count(_ => _.CharacterTyped == _.ExpectedCharacter);
 
-            return new(SecondaryFontColor, BackgroundColor,                
-                "", 
+            return new(SecondaryFontColor, BackgroundColor,
+                "",
+                $"Timer: {ElapsedExerciseTime}",
+                "",
                 $"Avg Speed: {KeysTyped.Average(_ => _.Milliseconds) / 1000:0.00}s",
                 "",
                 $"Accuracy: {(double)countOfCorrectKeysTyped / countOfKeysTyped:0.00%} ({countOfCorrectKeysTyped}/{countOfKeysTyped})" 

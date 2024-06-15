@@ -32,8 +32,6 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
             }
         }
 
-        public abstract Screen GetNextScreen();
-
         public abstract long RefreshRatioInMilliseconds { get; }
 
         public virtual void TriggerRefresh() => _refreshCount = _refreshCount == long.MaxValue ? 0 : _refreshCount + 1;       

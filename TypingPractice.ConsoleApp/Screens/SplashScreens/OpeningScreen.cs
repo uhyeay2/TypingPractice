@@ -15,19 +15,21 @@ namespace TypingPractice.ConsoleApp.Screens.SplashScreens
 
         private const int _borderHeight = 27;
 
-        private static readonly DisplayedSection Header = 
-            new(PrimaryFontColor, BackgroundColor, FiggleFonts.SlantSmall, "Typing  Practice");
+        private static readonly DisplayedSection Header = new(PrimaryFontColor, BackgroundColor, FiggleFonts.SlantSmall, 
+            "Typing  Practice");
 
-        private static readonly DisplayedSection KeyboardSection =
-            new(SecondaryFontColor, BackgroundColor, FiggleFonts.KeyboardSmall, "~1234567890-= ",
-                                                                             " QWERTYUIOP[]\\",
-                                                                             " ASDFGHJKL;' ",
-                                                                             " ZXCVBNM,./ ");
-        private DisplayedSection Signature =>
-            new(_signatureColor, BackgroundColor, FiggleFonts.CyberMedium, "By: Daniel Aguirre");
+        private static readonly DisplayedSection KeyboardSection = new(SecondaryFontColor, BackgroundColor, FiggleFonts.KeyboardSmall, 
+            "~1234567890-= ",
+            " QWERTYUIOP[]\\",
+            " ASDFGHJKL;' ",
+            " ZXCVBNM,./ ");
 
-        private static DisplayedSection PromptToClickKey =
-            new(SecondaryFontColor, BackgroundColor, "", "Press Any Key To Continue.");
+        private DisplayedSection Signature => new(_signatureColor, BackgroundColor, FiggleFonts.CyberMedium, 
+            "By: Daniel Aguirre");
+
+        private static DisplayedSection PromptToClickKey = new(SecondaryFontColor, BackgroundColor, 
+            "", 
+            "Press Any Key To Continue.");
 
         public override long RefreshRatioInMilliseconds => 60;
 

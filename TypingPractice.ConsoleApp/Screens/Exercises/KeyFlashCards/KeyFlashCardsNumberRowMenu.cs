@@ -10,7 +10,7 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
 
         public override int GetOptionsBorderWidth() => 110;
 
-        public override IEnumerable<(string OptionMessage, Screen NextScreen)> GetOptions() =>
+        public override (string OptionMessage, Screen NextScreen)[] NextScreenOptions =>
         [
             ("Only Numbers", new KeyFlashCardsExerciseScreen("1234567890")),
             ("Special Char", new KeyFlashCardsExerciseScreen("!@#$%^&*();:'\",.")),

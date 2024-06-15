@@ -85,5 +85,7 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
             LastKeyTyped = null;
             ExerciseStopwatch.Stop();
         }
+
+        public abstract Screen GetNextScreen();
     }
 }
