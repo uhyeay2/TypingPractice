@@ -67,9 +67,19 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
             );
 
         private DisplayedSection GetRightSideScreenContent(char? c, KeyTypedStat? lastKeyTyped) => new(
-            new DisplayedSection(SecondaryFontColor, BackgroundColor, "  Key Flash Cards  "), 
-            new DisplayedSection(PrimaryFontColor, BackgroundColor, FiggleFonts.CyberMedium, "Score", ""),
-            new BasicBorder(SecondaryFontColor, BackgroundColor, InnerBorderWidth, ScoresBorderHeight,GenerateScoresContent()).ToDisplayedSection(),
+            new DisplayedSection(InputBasedColor(c, lastKeyTyped), BackgroundColor,
+                "",
+                " _________             _________ ",
+                "|   ___   |  Keys     |   ___   |",
+                "|  / . \\  |           |  / . \\  |",
+                "| | /_\\ | |   Flash   | | /_\\ | |",
+                "|  \\___/  |           |  \\___/  |",
+                "|_________|    Cards  |_________|",
+                ""), 
+            //new DisplayedSection(PrimaryFontColor, BackgroundColor, FiggleFonts.CyberMedium, " Score", ""),
+            new BasicBorder(SecondaryFontColor, BackgroundColor, InnerBorderWidth, ScoresBorderHeight,
+                GenerateScoresContent()
+            ).ToDisplayedSection(),
             new DisplayedSection(InputBasedColor(c, lastKeyTyped), BackgroundColor, FiggleFonts.SlantSmall, GetPromptMessage(c, lastKeyTyped)).CenteredVertical(BackgroundColor, ResponsiveMessageHeight)
         );
 

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using TypingPractice.ConsoleApp.Display.ScreenContent;
 using TypingPractice.ConsoleApp.Models;
 
 namespace TypingPractice.ConsoleApp.Screens.BaseScreens
@@ -49,12 +50,16 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
         {
             KeepTyping = true;
 
-            Print(GetDisplay(), clearScreen: true);
+            Console.Clear();
+
+            RefreshUntilKeyAvailable(GetDisplayToPrintBeforeStarting);
 
             Console.ReadKey(true);
 
             ExerciseStopwatch.Start();
         }
+
+        public virtual DisplayedSection GetDisplayToPrintBeforeStarting() => GetDisplay();
 
         public override void RefreshUntilKeyAvailable()
         {

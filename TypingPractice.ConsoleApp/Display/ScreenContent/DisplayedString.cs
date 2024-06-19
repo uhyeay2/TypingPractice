@@ -15,8 +15,11 @@
             BackgroundColor = backgroundColor;
         }
 
+        public DisplayedString(char value, ConsoleColor fontColor, ConsoleColor backgroundColor) 
+            : this(value, 1, fontColor, backgroundColor) { }
+
         public DisplayedString(char value, int width, ConsoleColor fontColor, ConsoleColor backgroundColor) 
-            : this(new(value, width), fontColor, backgroundColor) { }
+            : this(new string(value, width), fontColor, backgroundColor) { }
 
         public void Write()
         {

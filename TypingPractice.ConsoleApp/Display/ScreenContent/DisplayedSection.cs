@@ -30,7 +30,7 @@ namespace TypingPractice.ConsoleApp.Display.ScreenContent
 
         public DisplayedSection(params DisplayedLine[] displayedLines)
         {
-            AddRange(displayedLines);   
+            AddRange(displayedLines);
         }
 
         public DisplayedSection(params List<DisplayedLine>[] displayedLines)
@@ -101,7 +101,7 @@ namespace TypingPractice.ConsoleApp.Display.ScreenContent
         }
 
         #endregion
-    
+
         public DisplayedSection AddRightSideSection(ConsoleColor paddingColor, DisplayedSection rightSection)
         {
             if (Count < rightSection.Count)

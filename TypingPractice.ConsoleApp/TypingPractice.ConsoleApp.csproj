@@ -11,4 +11,8 @@
     <PackageReference Include="Figgle" Version="0.5.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Screens\Adventure\" />
+  </ItemGroup>
+
 </Project>

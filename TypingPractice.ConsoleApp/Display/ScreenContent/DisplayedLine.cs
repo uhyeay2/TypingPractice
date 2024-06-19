@@ -1,7 +1,16 @@
-﻿namespace TypingPractice.ConsoleApp.Display.ScreenContent
+﻿using System.Diagnostics;
+using System.Text;
+
+namespace TypingPractice.ConsoleApp.Display.ScreenContent
 {
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public class DisplayedLine : List<DisplayedString>
     {
+        public DisplayedLine(IEnumerable<DisplayedString> strings)
+        {
+            AddRange(strings);
+        }
+
         public DisplayedLine(string value, ConsoleColor fontColor, ConsoleColor backgroundColor)
         {
             Add(new(value, fontColor, backgroundColor));
@@ -28,6 +37,18 @@
             a.AddRange(b);
 
             return a;
+        }
+
+        private string GetDebuggerDisplay()
+        {
+            var sb = new StringBuilder();
+
+            foreach (var str in this)
+            {
+                sb.Append(str.Value);
+            }
+
+            return sb.ToString();
         }
     }
 }
