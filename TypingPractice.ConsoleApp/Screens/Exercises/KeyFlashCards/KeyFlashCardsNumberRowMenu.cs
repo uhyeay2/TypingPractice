@@ -8,8 +8,6 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
     {
         public override string MenuTitle => "Num Row Flash Cards";
 
-        public override int GetOptionsBorderWidth() => 110;
-
         public override (string OptionMessage, Screen NextScreen)[] NextScreenOptions =>
         [
             ("Only Numbers", new KeyFlashCardsExerciseScreen("1234567890")),

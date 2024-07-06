@@ -1,103 +1,49 @@
 ﻿using Figgle;
 using TypingPractice.ConsoleApp.Display.ScreenContent;
 using TypingPractice.ConsoleApp.Display.BorderedSection;
-using TypingPractice.ConsoleApp.Extensions;
+using TypingPractice.ConsoleApp.Display.Animation;
 
 namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 {
     public abstract class DefaultScrollingMenu : ScrollingMenu
     {
-        public override long RefreshRatioInMilliseconds => 100;
+        private readonly Signature _signature = new(BackgroundColor);
 
-        private ConsoleColor _selectionIndicatorColor = PrimaryFontColor;
+        private readonly ColorChangingArrowGoingRight _leftSideSelectedOptionIndicator = new(BackgroundColor);
 
-        private string _leftSelectionIndicator = " >  ";
+        private readonly ColorChangingArrowGoingLeft _rightSideSelectedOptionIndicator = new(BackgroundColor);
 
-        private string _rightSelectionIndicator = "  < ";
+        public override IEnumerable<Animation> GetAnimations() => [_signature, _leftSideSelectedOptionIndicator, _rightSideSelectedOptionIndicator];
 
-        private bool _moveSelectionIndicatorInwards = true;
+        public virtual int GetOptionsBorderWidth() => 120;
 
-        public override void TriggerRefresh()
-        {
-            base.TriggerRefresh();
+        public virtual int GetOptionsBorderHeight() => 17;
 
-            _selectionIndicatorColor = _selectionIndicatorColor.CycleColor();
-
-            if (RefreshCount % 3 == 0)
-            {
-                if (_moveSelectionIndicatorInwards)
-                {
-                    _leftSelectionIndicator = _leftSelectionIndicator switch
-                    {
-                        ">   " => " >  ",
-                        " >  " => "  > ",
-                        "  > " => "   >",
-                        _ => ">   ",
-                    };
-
-                    _rightSelectionIndicator = _rightSelectionIndicator switch
-                    {
-                        "   <" => "  < ",
-                        "  < " => " <  ",
-                        " <  " => "<   ",
-                        _ => "   <",
-                    };
-
-                    _moveSelectionIndicatorInwards = !(_leftSelectionIndicator == "  > ");
-                }
-                else
-                {
-                    _leftSelectionIndicator = _leftSelectionIndicator switch
-                    {
-                        "   >" => "  > ",
-                        "  > " => " >  ",
-                        " >  " => ">   ",
-                        _ => ">   ",
-                    };
-
-                    _rightSelectionIndicator = _rightSelectionIndicator switch
-                    {
-                        "<   " => " <  ",
-                        " <  " => "  < ",
-                        "  < " => "   <",
-                        _ => "   <",
-                    };
-
-                    _moveSelectionIndicatorInwards = !(_leftSelectionIndicator == " >  ");
-                }
-            }
-        }
-
-        public override int CountOfOptionsToShow => 3;
-
-        public virtual int GetOptionsBorderWidth() => 70;
-
-        public virtual int GetOptionsBorderHeight() => 16;
+        private const int OptionsFontHeight = 6;
 
         public virtual DisplayedSection Header() => new(
             new DisplayedSection(PrimaryFontColor, BackgroundColor, FiggleFonts.SlantSmall, "Typing Practice"),
             new DisplayedSection(SecondaryFontColor, BackgroundColor, FiggleFonts.KeyboardSmall, MenuTitle)
         );
 
-        public virtual DisplayedSection Footer() => [];
+        public virtual DisplayedSection Footer() => _signature.Display();
 
         public abstract string MenuTitle { get; }
 
-        public override DisplayedSection FormatNonSelectedOption(string option) => 
-            new(SecondaryFontColor, BackgroundColor, FiggleFonts.CyberMedium, option);
+        public override DisplayedSection FormatNonSelectedOption(string option) =>
+            new DisplayedSection(SecondaryFontColor, BackgroundColor, FiggleFonts.SlantSmall, option).CenteredVertical(BackgroundColor, OptionsFontHeight);
 
         public override DisplayedSection FormatSelectedOption(string option) =>
-            new DisplayedSection(_selectionIndicatorColor, BackgroundColor, FiggleFonts.Doom, _leftSelectionIndicator)
-            .AddRightSideSection(BackgroundColor, 
-                new(PrimaryFontColor, BackgroundColor, FiggleFonts.Doom, option))
-            .AddRightSideSection(BackgroundColor, 
-                new(_selectionIndicatorColor, BackgroundColor, FiggleFonts.Doom, _rightSelectionIndicator));
+            _leftSideSelectedOptionIndicator.Display()
+            .AddRightSideSection(BackgroundColor, new DisplayedSection(PrimaryFontColor, BackgroundColor, FiggleFonts.SlantSmall, option)
+                .CenteredVertical(BackgroundColor, OptionsFontHeight))
+            .AddRightSideSection(BackgroundColor, _rightSideSelectedOptionIndicator.Display());
 
         public override DisplayedSection GetDisplayedContent(DisplayedSection formattedOptions) => 
             new DisplayedSection(
                 Header(),
-                new BasicBorder(PrimaryBorderColor, BackgroundColor, GetOptionsBorderWidth(), GetOptionsBorderHeight(), 
-                    formattedOptions).ToDisplayedSection(),
+                new DisplayInsideSimpleBorder(PrimaryBorderColor, BackgroundColor, GetOptionsBorderWidth(), GetOptionsBorderHeight(), 
+                    formattedOptions),
                 Footer()
             ).Centered(BackgroundColor);
     }

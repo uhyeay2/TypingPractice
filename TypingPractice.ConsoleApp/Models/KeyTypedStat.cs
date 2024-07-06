@@ -19,5 +19,5 @@
         public char ExpectedCharacter { get; set; }
 
         public bool IsCorrectKeyTyped => CharacterTyped == ExpectedCharacter;
-    }
+    }    
 }

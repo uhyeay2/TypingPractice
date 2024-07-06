@@ -62,7 +62,7 @@ namespace TypingPractice.ConsoleApp.Display.Animation
 
         public override long RefreshRateInMilliseconds => 200;
 
-        public override DisplayedSection AsDisplayedSection()
+        public override DisplayedSection Display()
         {
             var displayedSection = new DisplayedSection();
 
@@ -79,7 +79,7 @@ namespace TypingPractice.ConsoleApp.Display.Animation
 
         private int _currentFrame = 0;
 
-        public override void ChangeFrame()
+        public override void ChangeAnimation()
         {
             if (_currentFrame >= _frames.Length - 1)
             {

@@ -11,9 +11,9 @@ namespace TypingPractice.ConsoleApp.Display.Animation
 
         public void StopTimer() => _stopWatch.Stop();
 
-        public abstract void ChangeFrame();
+        public abstract void ChangeAnimation();
 
-        public abstract DisplayedSection AsDisplayedSection();
+        public abstract DisplayedSection Display();
 
         public bool IsReadyToUpdate => _stopWatch.ElapsedMilliseconds > RefreshRateInMilliseconds;
 

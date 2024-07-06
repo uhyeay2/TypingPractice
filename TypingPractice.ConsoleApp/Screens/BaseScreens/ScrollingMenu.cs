@@ -6,9 +6,11 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
     {
         public abstract (string OptionMessage, Screen NextScreen)[] NextScreenOptions { get; }
 
-        public abstract int CountOfOptionsToShow { get; }
+        public virtual int CountOfOptionsToShow { get; } = 3;
 
-        private int _currentIndex = 0;
+        protected int _currentIndex = 0;
+
+        private bool _selectionMade = false;
 
         public abstract DisplayedSection FormatSelectedOption(string option);
             
@@ -16,9 +18,11 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 
         public abstract DisplayedSection GetDisplayedContent(DisplayedSection formattedOptions);
 
-        public DisplayedSection GetFormattedOptions()
+        public virtual DisplayedSection GetFormattedOptions()
         {
-            var optionMessages = NextScreenOptions.Select(_ => _.OptionMessage);
+            var optionMessages = NextScreenOptions.Select(_ => _.OptionMessage).ToArray();
+
+            var currentIndex = _currentIndex > optionMessages.Length ? 0 : _currentIndex;
 
             IEnumerable<string> optionsBeforeSelectedOption, optionsAfterSelectedOption;
 
@@ -69,15 +73,40 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 
         public override DisplayedSection GetDisplay() => GetDisplayedContent(GetFormattedOptions());
 
+        public virtual void CheckInput(ConsoleKey input)
+        {
+            var maxIndex = NextScreenOptions.Length - 1;
+
+            switch (input)
+            {
+                case ConsoleKey.Enter:
+                    _selectionMade = true;
+                    break;
+
+                // 0 goes to max, everything else goes down
+                case ConsoleKey.UpArrow:
+                    _currentIndex = _currentIndex == 0 ? maxIndex : --_currentIndex;
+                    break;
+
+                // max goes to 0, everything else goes up
+                case ConsoleKey.DownArrow:
+                    _currentIndex = _currentIndex == maxIndex ? 0 : ++_currentIndex;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        public virtual Screen GetNextScreen() => NextScreenOptions[_currentIndex].NextScreen;
+
         public override Screen DisplayScreenAndGetNext()
         {
             Console.Clear();
 
-            var maxIndex = NextScreenOptions.Length - 1;
+            _selectionMade = false;
 
-            var selectionMade = false;
-
-            while (!selectionMade)
+            while (!_selectionMade)
             {
                 Console.SetCursorPosition(0, 0);
 
@@ -85,28 +114,10 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 
                 var input = Console.ReadKey(true).Key;
 
-                switch (input)
-                {
-                    case ConsoleKey.Enter:
-                        selectionMade = true;
-                        break;
-
-                    // 0 goes to max, everything else goes down
-                    case ConsoleKey.UpArrow:
-                        _currentIndex = _currentIndex == 0 ? maxIndex : --_currentIndex;
-                        break;
-
-                    // max goes to 0, everything else goes up
-                    case ConsoleKey.DownArrow:
-                        _currentIndex = _currentIndex == maxIndex ? 0 : ++_currentIndex;
-                        break;
-
-                    default:
-                        break;
-                }
+                CheckInput(input);
             }
 
-            return NextScreenOptions[_currentIndex].NextScreen;
+            return GetNextScreen();
         }
     }
 }

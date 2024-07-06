@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics;
+using TypingPractice.ConsoleApp.Constants;
 using TypingPractice.ConsoleApp.Display.Animation;
 using TypingPractice.ConsoleApp.Display.ScreenContent;
+using TypingPractice.ConsoleApp.Exceptions;
+using TypingPractice.ConsoleApp.Screens.Settings;
 
 namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 {
@@ -12,6 +15,10 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 
         private readonly Stopwatch RefreshStopWatch = new();
 
+        private int _lastWidth = Console.WindowWidth;
+        
+        private int _lastHeight = Console.WindowHeight;
+
         public abstract DisplayedSection GetDisplay();
 
         //TODO: Refactor so that all animations are using this
@@ -19,7 +26,7 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 
         public virtual void RefreshUntilKeyAvailable() => RefreshUntilKeyAvailable(GetDisplay);
 
-        public virtual void RefreshUntilKeyAvailable(Func<DisplayedSection> funcGetDisplay)
+        public virtual void RefreshUntilKeyAvailable(Func<DisplayedSection> funcGetDisplay, Func<bool>? funcForceStop = null)
         {
             RefreshStopWatch.Restart();
 
@@ -28,13 +35,30 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
                 animation.RestartTimer();
             }
 
-            while (!Console.KeyAvailable)
+            funcForceStop ??= () => false;
+
+            while (!Console.KeyAvailable && !funcForceStop.Invoke())
             {
+                if (!ConsoleSize.IsMeetingMinimumRequirements && this is not UpdateConsoleSizeScreen)
+                {
+                    throw new ConsoleSizeTooSmallException(this);
+                }
+
+                // Clear screen if it has been resized
+                if (_lastHeight != Console.WindowHeight || _lastWidth != Console.WindowWidth)
+                {
+                    Console.Clear();
+                    _lastHeight = Console.WindowHeight;
+                    _lastWidth = Console.WindowWidth;
+                    Console.CursorVisible = false;
+                }
+
+                // Update any of the animations that need are ready to change frames
                 foreach (var animation in GetAnimations())
                 {
                     if (animation.IsReadyToUpdate)
                     {
-                        animation.ChangeFrame();
+                        animation.ChangeAnimation();
 
                         animation.RestartTimer();
                     }
@@ -59,7 +83,7 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
             }
         }
 
-        public abstract long RefreshRatioInMilliseconds { get; }
+        public virtual long RefreshRatioInMilliseconds { get; } = 50;
 
         public virtual void TriggerRefresh() => _refreshCount = _refreshCount == long.MaxValue ? 0 : _refreshCount + 1;       
     }

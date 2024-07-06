@@ -75,6 +75,16 @@ namespace TypingPractice.ConsoleApp.Display.ScreenContent
             return this;
         }
 
+        public DisplayedSection PadBottom(ConsoleColor paddingColor, int targetHeight)
+        {
+            while (Count < targetHeight)
+            {
+                Add(new DisplayedLine("", paddingColor, paddingColor));
+            }
+
+            return this;
+        }
+
         public DisplayedSection CenteredHorizontal(ConsoleColor backgroundColor) => CenteredHorizontal(backgroundColor, Console.WindowWidth);
 
         public DisplayedSection CenteredHorizontal(ConsoleColor backgroundColor, int width)
@@ -104,6 +114,12 @@ namespace TypingPractice.ConsoleApp.Display.ScreenContent
 
         public DisplayedSection AddRightSideSection(ConsoleColor paddingColor, DisplayedSection rightSection)
         {
+            // Center this display to avoid issues with formatting when adding sections together
+            CenteredHorizontal(paddingColor, this.Max(_ => _.Width));
+
+            // Also center the displayedSection being merged to the right
+            rightSection.CenteredHorizontal(paddingColor, rightSection.Max(_ => _.Width));
+
             if (Count < rightSection.Count)
             {
                 CenteredVertical(paddingColor, rightSection.Count);

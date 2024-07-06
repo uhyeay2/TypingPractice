@@ -5,7 +5,8 @@
         public static ConsoleColor CycleColor(this ConsoleColor color) =>
             color switch
             {
-                ConsoleColor.Cyan => ConsoleColor.Blue,
+                ConsoleColor.Cyan => ConsoleColor.DarkCyan,
+                ConsoleColor.DarkCyan => ConsoleColor.Blue,
                 ConsoleColor.Blue => ConsoleColor.DarkBlue,
                 ConsoleColor.DarkBlue => ConsoleColor.DarkGreen,
                 ConsoleColor.DarkGreen => ConsoleColor.Green,

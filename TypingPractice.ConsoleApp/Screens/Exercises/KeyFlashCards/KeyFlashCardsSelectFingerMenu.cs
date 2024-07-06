@@ -8,8 +8,6 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
     {
         public override string MenuTitle => "Finger Flash Cards";
 
-        public override int GetOptionsBorderWidth() => 110;
-
         public override (string OptionMessage, Screen NextScreen)[] NextScreenOptions =>
         [
             ("Left Pinky", new KeyFlashCardsExerciseScreen("1!qQaAzZ")),

@@ -22,7 +22,7 @@ namespace TypingPractice.ConsoleApp.Screens.SplashScreens
 
         public override DisplayedSection Header() => new (base.Header(), _contentAboveMenu);
 
-        public override int GetOptionsBorderWidth() => 60;
+        public override int GetOptionsBorderWidth() => 100;
 
         public override int GetOptionsBorderHeight() => 10;
 

@@ -27,9 +27,9 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.BossSummoningScroll
             new BigScrollBorder(ScrollBorderColor, BackgroundColor, ScrollBorderWidth, ScrollBorderHeight,
                 new DisplayedSection(PrimaryFontColor, BackgroundColor, FiggleFonts.SlantSmall, "Typing  Practice"),
                 new DisplayedSection(
-                    _fireCauldron.AsDisplayedSection()
+                    _fireCauldron.Display()
                         .AddRightSideSection(BackgroundColor, new DisplayedSection(ConsoleColor.Red, BackgroundColor, FiggleFonts.Doom, "   BOSS   "))
-                        .AddRightSideSection(BackgroundColor, _fireCauldron.AsDisplayedSection()),
+                        .AddRightSideSection(BackgroundColor, _fireCauldron.Display()),
                     new DisplayedSection(ConsoleColor.Red, BackgroundColor, FiggleFonts.Doom, "SUMMONING")
                 ),
                 new DisplayedSection(PrimaryFontColor, BackgroundColor, FiggleFonts.CyberMedium, "By: Daniel Aguirre")

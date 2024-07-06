@@ -25,53 +25,6 @@ namespace TypingPractice.ConsoleApp.Display.BorderedSection
 
             _insideBottomSection = insideBottomSection ?? [];
         }
-
-        /*
-        
-           ,____________________________________________________________.-``-._                  
-          /`                                                         /` ._--_. `\                  
-         /`                                                         /` /  ._ `\ `\                 
-        |                                                          | ./  /  `| | |                
-        |                                                          | | `| .| | | |                 
-        |                                                          | `\ `\ ./`/ /`                  
-        `\                                                         `\ `\ `\__/ /`                  
-         `\,_________________________________________________________\ `\_____/`                  
-           |                                                         `| |                  
-           |                                                          | |                  
-           |                                                          | |                  
-           |                                                          | |                  
-           |                                                          | |                  
-           |                                                          | |                  
-           |                                                          | |                  
-           |                                                          | |                     
-           |                                                          | |                 
-           |                                                          | |              
-           |                                                          | |           
-           |                                                          | |        
-           |                                                          | |      
-          ,|_________________________________________________________/` |      
-         /`                                                         /` ,``-.   
-        /`                                                         /` / .-- `\ 
-       |                                                           | | / . `\ ` 
-       |                                                           | | | `| | |  <-- This line can duplicate, allow the bottom section to be larger
-       |                                                           | \ `../ | |
-       `\                                                          `\ \____/ /
-        `\__________________________________________________________,\______/      
-
-         /*
-             
-             /` / .-- `\ 
-             | | / . `\ `
-
-             | | | `| | | <-- Repeating Section
-
-             | | | `| | |
-             | \ `../ | |
-             `\ \____/ /
-             _,\______/  
-             
-             
-             */
          
         protected override DisplayedSection GetBottomBorder()
         {
@@ -130,7 +83,6 @@ namespace TypingPractice.ConsoleApp.Display.BorderedSection
             return border;
 
         }
-
 
         protected override DisplayedSection GetContentWithSideBorders() => 
             new (_insideSection.CenteredHorizontal(_backgroundColor, _width - WidthOfMiddleSideBorders)
