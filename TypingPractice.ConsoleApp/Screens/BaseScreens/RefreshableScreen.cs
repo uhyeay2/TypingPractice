@@ -32,7 +32,16 @@ namespace TypingPractice.ConsoleApp.Screens.BaseScreens
 
             foreach (var animation in GetAnimations())
             {
-                animation.RestartTimer();
+                if (animation.IsReadyToUpdate)
+                {
+                    animation.ChangeAnimation();
+
+                    animation.RestartTimer();
+                }
+                else
+                {
+                    animation.RestartTimer();
+                }
             }
 
             funcForceStop ??= () => false;

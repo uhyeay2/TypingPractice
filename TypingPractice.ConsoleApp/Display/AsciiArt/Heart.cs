@@ -17,12 +17,12 @@ namespace TypingPractice.ConsoleApp.Display.AsciiArt
         }
 
         private static readonly string[] _heart = [
-          " @@@  @@@ ",
-          "@###@@##%@",
-          " @#####%@ ",
-          "  @###%@  ",
-          "   @#%@   ",
-          "    @@    ",           
+          " @@  @@ ",
+          "@##@@#%@",
+          " @###%@ ",
+          "  @#%@  ",
+          "   @@   ",           
+          "        ",           
         ];
     }
 }

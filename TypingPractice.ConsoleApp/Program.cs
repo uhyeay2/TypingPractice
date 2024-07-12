@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.SymbolStore;
-using TypingPractice.ConsoleApp.Constants;
-using TypingPractice.ConsoleApp.Display.Animation;
+﻿using TypingPractice.ConsoleApp.Constants;
 using TypingPractice.ConsoleApp.Exceptions;
 using TypingPractice.ConsoleApp.Screens;
 using TypingPractice.ConsoleApp.Screens.Settings;

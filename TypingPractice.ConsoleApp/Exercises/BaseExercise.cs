@@ -7,7 +7,7 @@ using TypingPractice.ConsoleApp.Screens.SplashScreens;
 
 namespace TypingPractice.ConsoleApp.Exercises
 {
-    public abstract class BaseExercise : RefreshableScreen
+    public abstract class BaseExercise: RefreshableScreen
     {
         #region Private Members
 
@@ -33,7 +33,7 @@ namespace TypingPractice.ConsoleApp.Exercises
         {
             _settings = settings;
 
-            _currentLives = _settings.StartingLives;
+            _currentLives = _settings.StartingLives;            
         }
 
         #endregion
@@ -54,20 +54,8 @@ namespace TypingPractice.ConsoleApp.Exercises
         protected bool IsExerciseOverDueToMinimumWordsPerMinute() =>
             _settings.MinimumWordsPerMinute != null && _keysTyped.Count > 5 && GetWordsPerMinute() < _settings.MinimumWordsPerMinute;
 
-        protected bool IsExerciseOverDueToIncorrectInput(bool isLastKeyTypedCorrect)
-        {
-            if (isLastKeyTypedCorrect || _settings.StartingLives <= 0)
-            {
-                return false;
-            }
-
-            if (_settings.IsHardCoreEnabled)
-            {
-                return true;
-            }
-
-            return --_currentLives > 0;
-        }
+        protected bool IsExerciseOverDueToIncorrectInput(bool isLastKeyTypedCorrect) =>
+            isLastKeyTypedCorrect || _settings.StartingLives <= 0 ? false : --_currentLives <= 0;
 
         /// <summary>
         /// Returns the count of keys typed divided by the ExerciseStopWatch.Elapsed.TotalSeconds.
@@ -133,6 +121,8 @@ namespace TypingPractice.ConsoleApp.Exercises
 
         public abstract PauseScreen GetPauseScreen();
 
+        public abstract void NotifyExpectedInputGeneratorOfMistake();
+
         #endregion
 
         public override Screen DisplayScreenAndGetNext()
@@ -165,7 +155,7 @@ namespace TypingPractice.ConsoleApp.Exercises
                     }
                     else
                     {
-                        var input = Console.ReadKey();
+                        var input = Console.ReadKey(true);
 
                         var milliseconds = _keyStrokeStopwatch.Elapsed.TotalMilliseconds;
 
@@ -176,6 +166,11 @@ namespace TypingPractice.ConsoleApp.Exercises
                         else
                         {
                             _lastKeyTyped = new(_lastKeyTyped, milliseconds, input.KeyChar, _expectedInput.GetValueOrDefault());
+
+                            if (!_lastKeyTyped.IsCorrectKeyTyped)
+                            {
+                                NotifyExpectedInputGeneratorOfMistake();
+                            }
 
                             _keysTyped.Add(_lastKeyTyped);
 
@@ -205,7 +200,6 @@ namespace TypingPractice.ConsoleApp.Exercises
 
             return _exerciseState == ExerciseState.Paused ? GetPauseScreen() : GetGameOverScreen();
         }
-
 
         //TODO: Remove this
         public override DisplayedSection GetDisplay()

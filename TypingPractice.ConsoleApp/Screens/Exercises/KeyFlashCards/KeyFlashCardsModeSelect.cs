@@ -1,4 +1,5 @@
 ﻿using TypingPractice.ConsoleApp.Exercises;
+using TypingPractice.ConsoleApp.ExpectedInputGenerators;
 using TypingPractice.ConsoleApp.Screens.BaseScreens;
 
 namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
@@ -17,9 +18,9 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
 
         public override (string OptionMessage, Screen NextScreen)[] NextScreenOptions => 
         [
-            ("Hard Core", new KeyFlashCardsExercise(_pool, new ExerciseSettingsBuilder().EnableHardCoreMode().Build())),
-            ("10 Words Per Minute", new KeyFlashCardsExercise(_pool, new ExerciseSettingsBuilder().SetMinimumWordsPerMinute(10).Build())),
-            ("90 Seconds", new KeyFlashCardsExercise(_pool, new ExerciseSettingsBuilder().SetExerciseTimeLimit(90).Build())),
+            ("Hard Core", new KeyFlashCardsExercise(new KeyInputGeneratorOrdered(_pool), new ExerciseSettingsBuilder().SetLives(1, 1).Build())),
+            ("2 Words Per Minute", new KeyFlashCardsExercise(new KeyInputGeneratorRandom(_pool), new ExerciseSettingsBuilder().SetMinimumWordsPerMinute(2).Build())),
+            ("90 Seconds", new KeyFlashCardsExercise(new KeyInputGeneratorRandomPrioritizeMistakes(_pool, prioritizationMultiplier: 2), new ExerciseSettingsBuilder().SetExerciseTimeLimit(90).Build())),
         ];
     }
 }

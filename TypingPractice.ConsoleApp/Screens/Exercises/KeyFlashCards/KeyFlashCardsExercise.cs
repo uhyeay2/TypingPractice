@@ -1,44 +1,30 @@
 ﻿using Figgle;
-using TypingPractice.ConsoleApp.Display.Animation;
 using TypingPractice.ConsoleApp.Display.AsciiArt;
 using TypingPractice.ConsoleApp.Display.BorderedSection;
 using TypingPractice.ConsoleApp.Display.ScreenContent;
 using TypingPractice.ConsoleApp.Exercises;
+using TypingPractice.ConsoleApp.ExpectedInputGenerators;
 using TypingPractice.ConsoleApp.Extensions;
+using TypingPractice.ConsoleApp.Screens.Menus;
 using TypingPractice.ConsoleApp.Screens.SplashScreens;
 
 namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
 {
-    internal class KeyFlashCardsExercise: BaseExercise
+    internal class KeyFlashCardsExercise: BaseExerciseWithAnimations
     {
         #region Private Members 
 
-        private readonly string _pool;
-
-        private readonly Random _random = new();
-
-        private NumberGauge _accuracyGauge;
-
-        private NumberGauge _wordsPerMinuteGauge;
-
-        private const int _heightOfTimeRemainingProgressBar = 32;
-        private VerticalProgressBar _timeRemainingProgressBar;
-
-        public override IEnumerable<Animation> GetAnimations() => [_accuracyGauge, _wordsPerMinuteGauge, _timeRemainingProgressBar];
+        private readonly ExpectedInputGenerator<char> _expectedInputGenerator;
 
         #endregion
 
+        protected override int WordsPerMinuteGaugeMaxThreshold => 30;
+
         #region Constructors
 
-        public KeyFlashCardsExercise(string pool, ExerciseSettings settings) : base(settings)
+        public KeyFlashCardsExercise(ExpectedInputGenerator<char> expectedInputGenerator, ExerciseSettings settings) : base(settings)
         {
-            _pool = pool;
-            
-            _accuracyGauge = new(PrimaryFontColor, PrimaryFontColor, BackgroundColor, maxThreshold: 98.5, () => GetAccuracy() ?? 0.00);
-
-            _wordsPerMinuteGauge = new(PrimaryFontColor, PrimaryFontColor, BackgroundColor, maxThreshold: 30, () => GetWordsPerMinute() ?? 0.00);
-
-            _timeRemainingProgressBar = new(ConsoleColor.DarkGray, BackgroundColor, _heightOfTimeRemainingProgressBar, settings.ExerciseTimeLimitInSeconds.GetValueOrDefault(), () => settings.ExerciseTimeLimitInSeconds.GetValueOrDefault() - ElapsedExerciseTime.TotalSeconds);
+            _expectedInputGenerator = expectedInputGenerator;            
         }
 
         #endregion      
@@ -48,80 +34,23 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
         private DisplayedSection GetDisplay(bool beforeStarting)
         {
             const int SpeedGaugeWidth = 17;
-
-            var leftSide = new DisplayedSection(GetPromptSection(), GetExpectedInputSection(beforeStarting));
             
-            var remainingTimeSection = GetRemainingTimeSection();
-            
-            if (remainingTimeSection.Count > 0)
-            {
-                leftSide = remainingTimeSection.AddRightSideSection(BackgroundColor, leftSide);
-            }
+            var expectedInputSection = new DisplayedSection(GetPromptSection(), GetExpectedInputSection(beforeStarting));
 
-            var livesSection = GetLivesSection();
-
-            if (livesSection.Count > 0)
-            {
-                leftSide = livesSection.AddRightSideSection(BackgroundColor, leftSide);
-            }
-
-            var rightSide = new DisplayedSection(
+            var statsSection = new DisplayedSection(
                 new DisplayedSection (BackgroundColor, BackgroundColor, "", "", ""),
                 GetAccuracySection().CenteredHorizontal(BackgroundColor, SpeedGaugeWidth)
                     .AddRightSideSection(BackgroundColor,
-                        GetSpeedSection().CenteredHorizontal(BackgroundColor, SpeedGaugeWidth)),
+                        GetWordsPerMinuteSection().CenteredHorizontal(BackgroundColor, SpeedGaugeWidth)),
                 GetRecentErrorsSection());
-
-            return leftSide
+            
+            return expectedInputSection
                 .AddRightSideSection(BackgroundColor, new(BackgroundColor, BackgroundColor, "   "))
-                .AddRightSideSection(BackgroundColor, rightSide).Centered(BackgroundColor);
-        }
-
-        private DisplayedSection GetLivesSection()
-        {
-            if (CurrentLives <= 0)
-            {
-                return [];
-            }
-
-            const int LivesSectionWidth = 27;
-            const int LivesSectionHeight = 35;
-
-            var lives = new DisplayedSection(InputBasedColor, BackgroundColor, FiggleFonts.SlantSmall, "Lives:", "");
-
-            for (int i = 0; i < CurrentLives; i++)
-            {
-                lives.AddRange(new Heart(ConsoleColor.Red, ConsoleColor.DarkRed, BackgroundColor));
-            }
-
-            return lives.PadBottom(BackgroundColor, LivesSectionHeight)
-                        .CenteredHorizontal(BackgroundColor, LivesSectionWidth);
-        }
-
-        private DisplayedSection GetRemainingTimeSection()
-        {
-            var progressBar = _timeRemainingProgressBar.Display();
-
-            if (progressBar.Count == 0)
-            {
-                return [];
-            }           
-
-            const int WidthOfTimeRemainingProgressBar = 14;
-
-            var timeRemaining = new TimeSpan(0, 0, _settings.ExerciseTimeLimitInSeconds.GetValueOrDefault()) - ElapsedExerciseTime;
-
-            return new DisplayedSection(
-                new DisplayedSection(PrimaryFontColor, BackgroundColor, 
-                    "", 
-                    "", 
-                    "Time Left:", 
-                    "", 
-                    timeRemaining.TimeStamp(),
-                    "" 
-                ), progressBar
-            ).CenteredHorizontal(BackgroundColor, WidthOfTimeRemainingProgressBar);
-        }
+                .AddRightSideSection(BackgroundColor, statsSection)
+                .AddRightSideSection(BackgroundColor, GetRemainingTimeSection())
+                .AddRightSideSection(BackgroundColor, GetLivesSection())
+                .Centered(BackgroundColor);
+        }         
 
         private DisplayedSection GetExpectedInputSection(bool beforeStarting)
         {
@@ -146,7 +75,7 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
                 ));
             }
 
-            return new BasicBorder(InputBasedColor, BackgroundColor, ExpectedInputBorderWidth, ExpectedInputBorderHeight, expectedInput).ToDisplayedSection();
+            return new DisplayInsideSimpleBorder(InputBasedColor, BackgroundColor, ExpectedInputBorderWidth, ExpectedInputBorderHeight, expectedInput);
         }
 
         private DisplayedSection GetPromptSection()
@@ -162,40 +91,18 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
                 .Centered(BackgroundColor, PromptWidth, PromptHeight);
         }
 
-        private DisplayedSection GetAccuracySection()
-        {
-            var accuracy = GetAccuracy();
-
-            return new(
-                _accuracyGauge.Display(),
-                new DisplayedSection(PrimaryFontColor, BackgroundColor,
-                    "",
-                    "Accuracy: " + (accuracy == null ? "N/A" : accuracy.Value.ToString("0.00") + "%"))
-            );
-        }
-
-        private DisplayedSection GetSpeedSection()
-        {
-            return new(
-                _wordsPerMinuteGauge.Display(),
-                new DisplayedSection(PrimaryFontColor, BackgroundColor,
-                    "",
-                    $"WPM: {GetWordsPerMinute():0.00}")
-            );
-        }
-
         private DisplayedSection GetRecentErrorsSection()
         {
             const int Height = 27;
             const int Width = 38;
 
-            return new BasicBorder(ConsoleColor.Red, BackgroundColor, Width, Height,
+            return new DisplayInsideSimpleBorder(ConsoleColor.Red, BackgroundColor, Width, Height,
                 new DisplayedSection(
                     new DisplayedSection(ConsoleColor.Red, BackgroundColor, FiggleFonts.SlantSmall, "Recent", "Errors:"),
                     new DisplayedSection(ConsoleColor.Red, BackgroundColor, FiggleFonts.KeyboardSmall,
                         RecentErrors().Split(4).Select(_ => _.Aggregate((a, b) => a += b)).ToArray())
                 ).PadBottom(BackgroundColor, Height - 2)
-            ).ToDisplayedSection();
+            );
         }
 
         public override DisplayedSection GetDisplayBeforeStarting() =>
@@ -212,37 +119,26 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
                 return ExpectedInput;
             }
 
-            var newExpected = ExpectedInput;
-
-            // loop until we get a new input that is not the same as previous expectedInput
-            do
-            {
-                var lastErrors = RecentErrors();
-
-                var poolWithErrors = lastErrors.Any() ? _pool + lastErrors.Aggregate((a, b) => a += b) : _pool;
-
-                newExpected = poolWithErrors.ElementAt(_random.Next(0, poolWithErrors.Length));
-
-            } while (newExpected == LastKeyTyped?.CharacterTyped);
-
-            return newExpected;
+            return _expectedInputGenerator.GetNextExpectedInput();
         }
 
         //TODO: Implement GameOver Screen  
         public override Screen GetGameOverScreen() => new OpeningScreen();
 
-        public override PauseScreen GetPauseScreen() => new PauseScreen(this, new KeyFlashCardsMainMenu(), GenerateScoresContent());
-        
+        public override PauseScreen GetPauseScreen() => new PauseScreen(this, new MainMenu(), GenerateScoresContent());
+
         #endregion
 
         #region Helpers
 
         private IEnumerable<string> RecentErrors() =>
             KeysTyped.TakeLast(50)
-                     .Where(_ => _.IsCorrectKeyTyped && _.PreviousKeyTyped != null && !_.PreviousKeyTyped.IsCorrectKeyTyped && _pool.Contains(_.CharacterTyped))
-                     .DistinctBy(_ => _.CharacterTyped)
-                     .Select(_ => _.CharacterTyped.ToString());
+                     .Where(_ => _.IsCorrectKeyTyped && _.PreviousKeyTyped != null && !_.PreviousKeyTyped.IsCorrectKeyTyped)
+                     .DistinctBy(_ => _.ExpectedCharacter)
+                     .Take(16)
+                     .Select(_ => _.ExpectedCharacter.ToString());
 
+        //TODO: Replace/Update this - it's only used for pause, pause needs to be reworked and a game over screen created
         private DisplayedSection GenerateScoresContent()
         {
             var countOfKeysTyped = KeysTyped.Count;
@@ -314,6 +210,14 @@ namespace TypingPractice.ConsoleApp.Screens.Exercises.KeyFlashCards
             null or '\n' or '\r' or '\t' or '\b' or '\0' => ' ',
             _ => LastKeyTyped.CharacterTyped,
         };
+
+        public override void NotifyExpectedInputGeneratorOfMistake()
+        {
+            if (LastKeyTyped != null && !LastKeyTyped.IsCorrectKeyTyped)
+            {
+                _expectedInputGenerator.NotifyOfMistake(LastKeyTyped.ExpectedCharacter);
+            }            
+        }
 
         #endregion
     }

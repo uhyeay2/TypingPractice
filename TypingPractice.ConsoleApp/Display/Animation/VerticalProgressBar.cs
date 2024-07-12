@@ -12,6 +12,7 @@ namespace TypingPractice.ConsoleApp.Display.Animation
         private const int _heightOfTopAndBottomBorder = 2;
         private readonly int _height;
         private readonly int _maxValue;
+        private readonly double _valueOfOneLine;
 
         private readonly Func<double> _funcGetCurrentValue;
         private double _heightOfProgressBarMissing;
@@ -27,6 +28,8 @@ namespace TypingPractice.ConsoleApp.Display.Animation
 
             _height = height;
             _maxValue = maxValue;
+
+            _valueOfOneLine = (_maxValue * 1.00) / _height;
 
             _funcGetCurrentValue = funcGetCurrentValue;
         }
@@ -50,7 +53,7 @@ namespace TypingPractice.ConsoleApp.Display.Animation
 
                 _progressBarColor = GetProgressBarColor(currentValue);
 
-                _heightOfProgressBarMissing = (_maxValue - currentValue) / ( _maxValue / (_height - _heightOfTopAndBottomBorder) );
+                _heightOfProgressBarMissing = double.Floor((_maxValue - currentValue) / _valueOfOneLine) - 1;
             }
         }
 
@@ -64,9 +67,18 @@ namespace TypingPractice.ConsoleApp.Display.Animation
 
             var progressBar = new List<DisplayedLine>();
 
-            while (progressBar.Count < _heightOfProgressBarMissing - 1)
+            while (progressBar.Count < _heightOfProgressBarMissing)
             {
-                progressBar.Add(SideBorder + new DisplayedLine("   ", _backgroundColor, _backgroundColor) + SideBorder);
+                var isAddingLastLineInProgressBar = progressBar.Count == _height - _heightOfTopAndBottomBorder - 1;
+
+                if (isAddingLastLineInProgressBar)
+                {
+                    progressBar.Add(SideBorder + new DisplayedLine("===", _progressBarColor, _backgroundColor) + SideBorder);
+                }
+                else
+                {
+                    progressBar.Add(SideBorder + new DisplayedLine("   ", _backgroundColor, _backgroundColor) + SideBorder);
+                }
             }
 
             while (progressBar.Count < _height - _heightOfTopAndBottomBorder)

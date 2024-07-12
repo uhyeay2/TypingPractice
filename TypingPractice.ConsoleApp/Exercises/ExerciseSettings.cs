@@ -4,10 +4,8 @@
     {
         #region Constructor
 
-        public ExerciseSettings(bool isHardCoreModeEnabled, int startingLives, int maxLives, int? exerciseTimeLimitInSeconds, double? minimumKeysPerSecond, double? minimumWordsPerMinute)
+        public ExerciseSettings(int startingLives, int maxLives, int? exerciseTimeLimitInSeconds, double? minimumKeysPerSecond, double? minimumWordsPerMinute)
         {
-            _isHardCoreModeEnabled = isHardCoreModeEnabled;
-
             _startingLives = startingLives;
 
             _maxLives = maxLives;
@@ -23,8 +21,6 @@
 
         #region Private Readonly Fields
 
-        private readonly bool _isHardCoreModeEnabled;
-
         private readonly int _startingLives;
 
         private readonly int _maxLives;
@@ -38,8 +34,6 @@
         #endregion
 
         #region Public Members
-
-        public bool IsHardCoreEnabled => _isHardCoreModeEnabled;
 
         public int StartingLives => _startingLives; 
 

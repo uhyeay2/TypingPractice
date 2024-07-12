@@ -4,8 +4,6 @@
     {
         #region Private Members For Initializing Exercise Settings
 
-        private bool _isHardCoreEnabled = false;
-
         private int _startingLives = 0;
 
         private int _maxLives = 1;
@@ -25,22 +23,7 @@
         /// </summary>
         /// <returns>New instance of ExerciseSettings</returns>
         public ExerciseSettings Build() => 
-            new(_isHardCoreEnabled, _startingLives, _maxLives, _exerciseTimeLimitInSeconds, _minimumKeysPerSecond, _minimumWordsPerMinute);
-
-        /// <summary>
-        /// Turns HardCoreMode on, sets StartingLives and MaxLives to 1.
-        /// </summary>
-        /// <returns>The instance of ExerciseSettingsBuilder that is calling this method.</returns>
-        public ExerciseSettingsBuilder EnableHardCoreMode()
-        {
-            _isHardCoreEnabled = true;
-
-            _startingLives = 1;
-
-            _maxLives = 1;
-
-            return this;
-        }
+            new(_startingLives, _maxLives, _exerciseTimeLimitInSeconds, _minimumKeysPerSecond, _minimumWordsPerMinute);
 
         /// <summary>
         /// Turns HardCoreMode off, sets StartingLives and MaxLives to whatever is passed in. 
@@ -49,20 +32,8 @@
         /// <param name="startingLives">The number of lives to start the exercise with. If less than 1, then will default to 1.</param>
         /// <param name="maxLives">The maximum number of lives that can be obtained during the exercise. If less than 1, then will default to 1.</param>
         /// <returns>The instance of ExerciseSettingsBuilder that is calling this method.</returns>
-        public ExerciseSettingsBuilder EnableLivesMode(int startingLives, int maxLives)
+        public ExerciseSettingsBuilder SetLives(int startingLives, int maxLives)
         {
-            if (startingLives < 1)
-            {
-                startingLives = 1;
-            }
-
-            if (maxLives < 1)
-            {
-                maxLives = 1;
-            }
-
-            _isHardCoreEnabled = false;
-
             _startingLives = startingLives;
 
             _maxLives = maxLives;

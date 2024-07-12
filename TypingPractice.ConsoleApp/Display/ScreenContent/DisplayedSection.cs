@@ -114,6 +114,16 @@ namespace TypingPractice.ConsoleApp.Display.ScreenContent
 
         public DisplayedSection AddRightSideSection(ConsoleColor paddingColor, DisplayedSection rightSection)
         {
+            if (Count == 0)
+            {
+                return rightSection;
+            }
+
+            if (rightSection.Count == 0)
+            {
+                return this;
+            }
+
             // Center this display to avoid issues with formatting when adding sections together
             CenteredHorizontal(paddingColor, this.Max(_ => _.Width));
 
